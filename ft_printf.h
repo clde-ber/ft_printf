@@ -14,5 +14,6 @@ const char	*ft_strjoin(const char *s1, const char *s2);
 const char	*find_param(const char *format, const char *params);
 const void	*ft_memmove(const void *dst, const void *src, size_t len);
 void 		*ft_convert(char *str, va_list args, char *format);
+const char		*ft_itoa(long n);
 
 #endif
