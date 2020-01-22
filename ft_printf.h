@@ -13,6 +13,6 @@ int	ft_strlen(const char *s);
 const char	*ft_strjoin(const char *s1, const char *s2);
 const char	*find_param(const char *format, const char *params);
 const void	*ft_memmove(const void *dst, const void *src, size_t len);
-va_list		ft_convert(va_list args);
+void 		*ft_convert(char *str, va_list args, char *format);
 
 #endif
