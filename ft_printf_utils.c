@@ -124,13 +124,20 @@ const void	*ft_memmove(const void *dst, const void *src, size_t len)
 void		*ft_convert(char *str, va_list args, char *format)
 {
 	printf("sizeof %zu\n", sizeof(args));
-	args = (sizeof(args) == sizeof(char)) ? va_arg(args, char) : args;
-	args = (sizeof(args) == sizeof(unsigned char)) ? va_arg(args, unsigned char) : args;
-	args = (sizeof(args) == sizeof(int)) ? ft_itoa(va_arg(args, long)) : args;
-	args = (sizeof(args) == sizeof(unsigned int) && args < 0) ? ft_itoa(va_arg(args, long)) : args;
-	args = (sizeof(args) == sizeof(long) && ft_strlen(args) == -1) ? ft_itoa(va_arg(args, long)) : args;
-	args = (sizeof(args) == sizeof(unsigned long) && args < 0 && ft_strlen(args) == -1) ? ft_itoa(va_arg(args, long)) : args;
-	args = (sizeof(args) == sizeof(char *)) ? va_arg(args, char *) : args;
+	if (sizeof(args) == sizeof(char))
+	args = va_arg(args, char);
+	if (sizeof(args) == sizeof(unsigned char))
+	args = va_arg(args, unsigned char);
+	if (sizeof(args) == sizeof(int))
+	args = ft_itoa(va_arg(args, long));
+	if (sizeof(args) == sizeof(unsigned int) && args < 0)
+	args = ft_itoa(va_arg(args, long));
+	if (sizeof(args) == sizeof(long) && ft_strlen(args) == -1)
+	args = ft_itoa(va_arg(args, long));
+	if (sizeof(args) == sizeof(unsigned long) && args < 0 && ft_strlen(args) == -1)
+	args = ft_itoa(va_arg(args, long));
+	if (sizeof(args) == sizeof(char *))
+	args = va_arg(args, char *);
 	printf("value %s\n", args);
 	printf("strlen %d\n", ft_strlen(args));
 	write(1, "a", 1);
