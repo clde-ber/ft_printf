@@ -1,6 +1,10 @@
 #include "ft_printf.h"
-
-int		main(int ac, char **av)
+int main()
+{
+	ft_printf("hellos", "toi", "ca", "va");
+	return (0);
+}
+/*int		main(int ac, char **av)
 {
 	(void)ac;
 	size_t i;
@@ -11,10 +15,10 @@ int		main(int ac, char **av)
 	while (av[i + 1])
 	{
 		params = (i == 1) ? ft_strjoin(av[i], av[i + 1]) : ft_strjoin(params, av[i + 1]);
-	//	printf(format, params);
+//		printf(format, params);
 		i++;
 	}
-	ft_printf(format, params);
+	ft_printf(format, "hello", "toi", "ca", "va");
 //	printf("params %s\n", params);
 	return (0);
-}
+}*/
