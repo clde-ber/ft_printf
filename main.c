@@ -1,7 +1,7 @@
 #include "ft_printf.h"
 int main()
 {
-	ft_printf("hellos", "toi", "ca", "va");
+	ft_printf("hellos", "toi", -1000000, "va");
 	return (0);
 }
 /*int		main(int ac, char **av)
