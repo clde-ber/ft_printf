@@ -1,7 +1,14 @@
 #include "ft_printf.h"
 int main()
 {
-	ft_printf("hellos", "toi", -1000000, "va");
+	ft_printf("%*%", 'a', -1000000, "va");
+	printf("sizeof int %d\n", sizeof(int));
+	printf("sizeof char %d\n", sizeof(char));
+	printf("sizeof char * %d\n", sizeof(char *));
+	printf("sizeof uint %d\n", sizeof(unsigned int));
+	printf("sizeof ulong %d\n", sizeof(unsigned long));
+	printf("sizeof unsigned char %d\n", sizeof(unsigned char));
+
 	return (0);
 }
 /*int		main(int ac, char **av)
@@ -10,7 +17,6 @@ int main()
 	size_t i;
 	const char *format = "%s\n";
 	const char *params;
-
 	i = 1;
 	while (av[i + 1])
 	{
