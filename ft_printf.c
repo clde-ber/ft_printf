@@ -21,7 +21,8 @@ int	ft_printf(const char *format, ...)
 	//	va_arg(args, char *);
 		str = ft_strjoin(str, ft_convert(str, args, format));
 		str = ft_strjoin(str, ", ");
-		va_arg(args, const char *);
+
+		ft_itoa(va_arg(args, long));
 		printf("%s\n", str);
 		write(1, "a", 1);
 		i++;
