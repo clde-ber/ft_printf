@@ -65,6 +65,8 @@ const char	*ft_strjoin(const char *s1, const char *s2)
 	while (s2[++j])
 		ptr[i + j] = s2[j];
 	ptr[i + j] = '\0';
+//	free (s2);
+//	free(s1);
 	return ((const char *)ptr);
 }
 
@@ -119,23 +121,20 @@ const void	*ft_memmove(const void *dst, const void *src, size_t len)
 	return ((const char *)dst);
 }
 
-va_list		ft_convert(va_list args)
+void		*ft_convert(char *str, va_list args, char *format)
 {
-	void *value;
-
-	write(1, "a", 1);
 	printf("sizeof %zu\n", sizeof(args));
-	value = (sizeof(args) == sizeof(char)) ? (char)value : value;
-	value = (sizeof(args) == sizeof(unsigned char)) ? (unsigned char)value : value;
-	value = (sizeof(args) == sizeof(char *)) ? (char *)value : value;
-	value = (sizeof(args) == sizeof(int)) ? (int)value : value;
-	value = (sizeof(args) == sizeof(unsigned int) && args < 0) ? (unsigned int)value : value;
-	value = (sizeof(args) == sizeof(long) && ft_strlen(args) == -1) ? (long)value: value;
-	value = (sizeof(args) == sizeof(unsigned long) && args < 0 && ft_strlen(args) == -1) ? (unsigned long)value : value;
-	printf("value %s\n", value);
+	args = (sizeof(args) == sizeof(char)) ? va_arg(args, char) : args;
+	args = (sizeof(args) == sizeof(unsigned char)) ? va_arg(args, unsigned char) : args;
+	args = (sizeof(args) == sizeof(char *)) ? va_arg(args, char *) : args;
+	args = (sizeof(args) == sizeof(int)) ? va_arg(args, int) : args;
+	args = (sizeof(args) == sizeof(unsigned int) && args < 0) ? va_arg(args, unsigned int) : args;
+	args = (sizeof(args) == sizeof(long) && ft_strlen(args) == -1) ? va_arg(args, long) : args;
+	args = (sizeof(args) == sizeof(unsigned long) && args < 0 && ft_strlen(args) == -1) ? va_arg(args, unsigned long) : args;
+	printf("value %s\n", args);
 	printf("strlen %d\n", ft_strlen(args));
 	write(1, "a", 1);
-	return (value);
+	return (args);
 }
 
 static int	len_int(int n)
