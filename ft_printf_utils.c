@@ -36,11 +36,13 @@ int	ft_isdigit(int c)
 	return (0);
 }
 
-size_t	ft_strlen(const char *s)
+int	ft_strlen(const char *s)
 {
-	size_t i;
+	int i;
 
 	i = 0;
+	if (!s)
+		return (-1);
 	while (s[i])
 		i++;
 	return (i);
@@ -54,7 +56,7 @@ const char	*ft_strjoin(const char *s1, const char *s2)
 
 	i = -1;
 	j = -1;
-	if (!s1 && !s2)
+	if (!s1 || !s2)
 		return (0);
 	if (!(ptr = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1))))
 		return (0);
@@ -117,9 +119,84 @@ const void	*ft_memmove(const void *dst, const void *src, size_t len)
 	return ((const char *)dst);
 }
 
-int		*ft_transform_printf(int *ft_printf)
+va_list		ft_convert(va_list args)
 {
-	int *new_printf;
+	void *value;
 
-	new_printf = ft_printf(char *format, )
+	write(1, "a", 1);
+	printf("sizeof %zu\n", sizeof(args));
+	value = (sizeof(args) == sizeof(char)) ? (char)value : value;
+	value = (sizeof(args) == sizeof(unsigned char)) ? (unsigned char)value : value;
+	value = (sizeof(args) == sizeof(char *)) ? (char *)value : value;
+	value = (sizeof(args) == sizeof(int)) ? (int)value : value;
+	value = (sizeof(args) == sizeof(unsigned int) && args < 0) ? (unsigned int)value : value;
+	value = (sizeof(args) == sizeof(long) && ft_strlen(args) == -1) ? (long)value: value;
+	value = (sizeof(args) == sizeof(unsigned long) && args < 0 && ft_strlen(args) == -1) ? (unsigned long)value : value;
+	printf("value %s\n", value);
+	printf("strlen %d\n", ft_strlen(args));
+	write(1, "a", 1);
+	return (value);
+}
+
+static int	len_int(int n)
+{
+	int	i;
+
+	i = 0;
+	if (n == -2147483648)
+		return (11);
+	else if (n <= 2147483647 && n > -2147483648)
+	{
+		if (n == 0)
+			return (1);
+		if (n < 0)
+		{
+			n = -n;
+			i += 1;
+		}
+		while (n > 0)
+		{
+			n = n / 10;
+			i++;
+		}
+	}
+	return (i);
+}
+
+static int	ft_pow(int nb, int pow)
+{
+	int	i;
+	int	res;
+
+	i = 0;
+	res = 1;
+	while (i < pow)
+	{
+		res = res * nb;
+		i++;
+	}
+	return (res);
+}
+
+const char		*ft_itoa(long n)
+{
+	int		i;
+	int		j;
+	int		k;
+	char	*str;
+
+	if (n == -2147483648)
+		return ((const char *)ft_strjoin("-2147483648", ""));
+	i = -1;
+	k = n;
+	j = len_int(k);
+	if (!(str = malloc(sizeof(char) * (len_int(n) + 1))))
+		return (0);
+	n = (n < 0) ? -n : n;
+	while (j-- > 0)
+		if (i++ <= len_int(k))
+			str[j] = ((n / ft_pow(10, i)) % 10) + '0';
+	str[len_int(k)] = '\0';
+	str[0] = (k < 0) ? '-' : str[0];
+	return ((const char *)str);
 }
