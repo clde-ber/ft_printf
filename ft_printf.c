@@ -12,17 +12,23 @@ int	ft_printf(const char *format, ...)
 	nb_params = 0;
 	va_start(args, format);
 	str = ft_strjoin("", "");
-	while (format[i++])
-		if (format[i] == '*' || format[i] == '%')
-			nb_params++;
-	i = 0;
+	nb_params = ft_nb_params(format);
 	while (i < nb_params)
 	{
-		str = ft_strjoin(str, ft_itoa(va_arg(args, int)));
+		if (ft_find_type(&format[i]) == 'c')
+			str = ft_strjoin(str, char_to_s(va_arg(args, char)));
+		if (ft_find_type(&format[i]) == 'u')
+			str = ft_strjoin(str, uchar_to_s(va_arg(args, unsigned char)));
+		if (ft_find_type(&format[i]) == 's')
+			str = ft_strjoin(str, va_arg(args, char *));
+		if (ft_find_type(&format[i]) == 'd')
+			str = ft_strjoin(str, ft_itoa(va_arg(args, int)));
+		if (ft_find_type(&format[i]) == 'i')
+			str = ft_strjoin(str, ft_itoa(va_arg(args, unsigned int)));
 		if (i < nb_params)
 			str = ft_strjoin(str, ", ");
 		printf("str %s\n", str);
-		i++;
+		i = ft_find_index(&format[i]);
 	}
 	va_end(args);
 	return (0);
