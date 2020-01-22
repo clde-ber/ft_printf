@@ -2,39 +2,33 @@
 
 int	ft_printf(const char *format, ...)
 {
-	int		res;
 	const char *str;
 	size_t i;
-	void *ptr;
+	size_t nb_params;
 	va_list	args;
 
 
 	i = 0;
-	ptr = args;
-	write(1, "a", 1);
-	write(1, "a", 1);
+	nb_params = 0;
 	va_start(args, format);
-	str = ft_strjoin("", ft_convert(str, args, format));
-	printf("hey %s\n", str);
-	while (*args)
+	str = ft_strjoin("", "");
+	while (format[i++])
+		if (format[i] == '*' || format[i] == '%')
+			nb_params++;
+	i = 0;
+	while (i < nb_params)
 	{
-	//	va_arg(args, char *);
-		str = ft_strjoin(str, ft_convert(str, args, format));
-		str = ft_strjoin(str, ", ");
-
-		ft_itoa(va_arg(args, long));
-		printf("%s\n", str);
-		write(1, "a", 1);
+		str = ft_strjoin(str, ft_itoa(va_arg(args, int)));
+		if (i < nb_params)
+			str = ft_strjoin(str, ", ");
+		printf("str %s\n", str);
 		i++;
 	}
-	str = ft_strjoin(str, ft_convert(str, args, format));
-	printf("%s\n", str);
 	va_end(args);
-	return (res);
+	return (0);
 }
 
 /*#include "ft_printf.h"
-
 int	ft_printf(const char *format, ...)
 {
 	int i;
@@ -42,7 +36,6 @@ int	ft_printf(const char *format, ...)
 	const char **stock;
 	const char *output;
 	int	*fct_ptr;
-
 	i = -1;
 	j = -1;
 	while (format[++i])
@@ -67,4 +60,3 @@ int	ft_printf(const char *format, ...)
 	ft_transform_printf(format, ...);
 	printf("%s\n", find_param(format, params));
 }*/
-
