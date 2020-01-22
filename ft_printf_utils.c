@@ -121,29 +121,6 @@ const void	*ft_memmove(const void *dst, const void *src, size_t len)
 	return ((const char *)dst);
 }
 
-void		*ft_convert(char *str, va_list args, char *format)
-{
-	printf("sizeof %zu\n", sizeof(args));
-	if (sizeof(args) == sizeof(char))
-	args = va_arg(args, char);
-	if (sizeof(args) == sizeof(unsigned char))
-	args = va_arg(args, unsigned char);
-	if (sizeof(args) == sizeof(int))
-	args = ft_itoa(va_arg(args, long));
-	if (sizeof(args) == sizeof(unsigned int) && args < 0)
-	args = ft_itoa(va_arg(args, long));
-	if (sizeof(args) == sizeof(long) && ft_strlen(args) == -1)
-	args = ft_itoa(va_arg(args, long));
-	if (sizeof(args) == sizeof(unsigned long) && args < 0 && ft_strlen(args) == -1)
-	args = ft_itoa(va_arg(args, long));
-	if (sizeof(args) == sizeof(char *))
-	args = va_arg(args, char *);
-	printf("value %s\n", args);
-	printf("strlen %d\n", ft_strlen(args));
-	write(1, "a", 1);
-	return (args);
-}
-
 static int	len_int(int n)
 {
 	int	i;
@@ -184,7 +161,7 @@ static int	ft_pow(int nb, int pow)
 	return (res);
 }
 
-const char		*ft_itoa(long n)
+const char		*ft_itoa(int n)
 {
 	int		i;
 	int		j;
@@ -205,4 +182,30 @@ const char		*ft_itoa(long n)
 	str[len_int(k)] = '\0';
 	str[0] = (k < 0) ? '-' : str[0];
 	return ((const char *)str);
+}
+
+int	ft_atoi(const char *str)
+{
+	int i;
+	int j;
+	int res;
+
+	i = 0;
+	j = 0;
+	res = 0;
+	while (str[i] == 32 || (str[i] >= 9 && str[i] <= 13))
+		i++;
+	if (str[i] == '+' || str[i] == '-')
+	{
+		if (str[i] == '-')
+			j = (str[i] == '-') ? -1 : 1;
+		i++;
+	}
+	while (ft_isdigit(str[i]))
+		res = res * 10 + (str[i++] - 48);
+	if (res == -2147483648)
+		return (res);
+	if (j < 0)
+		res = res * j;
+	return (res);
 }
