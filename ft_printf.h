@@ -20,5 +20,7 @@ size_t	ft_nb_params(const char *format);
 char	ft_find_type(const char *str);
 size_t	ft_index(const char *str, const char *format);
 char	*char_to_s(int x);
+char	*to_hex(unsigned int n, char *base);
+char	*revstr(char *str);
 
 #endif
