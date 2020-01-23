@@ -271,3 +271,56 @@ char	*char_to_s(int x)
 	s[1] = '\0';
 	return (s);
 }
+
+char	*to_hex(unsigned int n, char *base)
+{
+	int i;
+	int j;
+	char *str;
+	unsigned int k;
+
+	k = n;
+	i = 0;
+	j = -1;
+	printf("ft_strlen base to_hex %zu\n", ft_strlen(base));
+	while (k > 0)
+	{
+		k = k / ft_strlen(base);
+		i++;
+	}
+	if (!(str = malloc(sizeof(char) * (i + 1))))
+		return (0);
+	printf("i + 1 to_hex %zu\n", i + 1);
+	i = 0;
+	while (n > 0)
+	{
+		str[i] = base[n % ft_strlen(base)];
+		n = n / ft_strlen(base);
+		i++;
+	}
+	str[ft_strlen(str)] = '\0';
+	printf("%s\n", str);
+	str = revstr(str);
+	printf("ft_strlen str to_hex %zu\n", ft_strlen(str));
+	return (str);
+}
+
+char	*revstr(char *str)
+{
+	size_t i;
+	size_t j;
+	char *newstr;
+
+	j = 0;
+	i = ft_strlen(str) + 1;
+	if (!(newstr = malloc(sizeof(char) * i)))
+		return (0);
+	while (i - 1 > 0)
+	{
+		newstr[j] = str[--i - 1];
+		j++;
+	}
+	newstr[j] = '\0';
+	printf("newstr %s\n", newstr);
+	return (newstr);
+}
