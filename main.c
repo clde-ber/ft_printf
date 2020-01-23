@@ -1,7 +1,7 @@
 #include "ft_printf.h"
 int main()
 {
-	ft_printf("%d%d%c", 25631654, -1000000, 'a');
+	ft_printf("%d%X%c", 25631654, 1000000, 'a');
 	unsigned int i;
 
 /*	i = 400000;
