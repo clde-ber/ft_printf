@@ -272,17 +272,14 @@ char	*char_to_s(int x)
 	return (s);
 }
 
-char	*to_hex(unsigned int n, char *base)
+char	*to_hex(char c, unsigned int n, char *base)
 {
 	int i;
-	int j;
 	char *str;
 	unsigned int k;
 
 	k = n;
 	i = 0;
-	j = -1;
-	printf("ft_strlen base to_hex %zu\n", ft_strlen(base));
 	while (k > 0)
 	{
 		k = k / ft_strlen(base);
@@ -290,7 +287,6 @@ char	*to_hex(unsigned int n, char *base)
 	}
 	if (!(str = malloc(sizeof(char) * (i + 1))))
 		return (0);
-	printf("i + 1 to_hex %zu\n", i + 1);
 	i = 0;
 	while (n > 0)
 	{
@@ -299,9 +295,23 @@ char	*to_hex(unsigned int n, char *base)
 		i++;
 	}
 	str[ft_strlen(str)] = '\0';
-	printf("%s\n", str);
 	str = revstr(str);
-	printf("ft_strlen str to_hex %zu\n", ft_strlen(str));
+	if (c == 'X')
+		str = str_toupper(str);
+	return (str);
+}
+
+char *str_toupper(char *str)
+{
+	size_t i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] >= 97 && str[i] <= 122)
+			str[i] = str[i] - 32;
+		i++;
+	}
 	return (str);
 }
 
