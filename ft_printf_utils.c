@@ -1,6 +1,6 @@
 #include "ft_printf.h"
 
-int		check_format(const char *format)
+int		ft_format(const char *format)
 {
 	const char *c;
 	size_t i;
@@ -12,12 +12,12 @@ int		check_format(const char *format)
 		return (0);
 	while (c[i] == 'd' || c[i] == 'i' || c[i] == 'o' || c[i] == 'u' || c[i] == 'x' || c[i] == 'X'
 		|| c[i] == 'c' || c[i] == 's' || c[i] == '*' || c[i] == '#' || c[i] == '0' || c[i] == '-'
-		|| ft_isdigit(c[i]) || c[i] == '$')
+		|| ft_isdigit(c[i]) || c[i] == '$' || c[i] == '%')
 	{
 		i = (c[i] == '*' || c[i] == '#' || c[i] == '0' || c[i] == '-' || ft_isdigit(c[i])) ? ++i : i;
 		i = (c[i] == 'd' || c[i] == 'i' || c[i] == 'o' || c[i] == 'u' || c[i] == 'x'
 		|| c[i] == 'X' || c[i] == 'c' || c[i] == 's' || ft_isdigit(c[i])) ? ++i : i;
-		i = (c[i] == '*') ? ++i : i;
+		i = (c[i] == '*' || c[i] == '%') ? ++i : i;
 		i = (ft_isdigit(c[i])) ? ++i : i;
 		i = (c[i] == '$') ? ++i : i;
 		i = (c[i] == 'd' || c[i] == 'i' || c[i] == 'o' || c[i] == 'u' || c[i] == 'x' || c[i] == 'X'
@@ -213,7 +213,9 @@ int	ft_atoi(const char *str)
 size_t	ft_nb_params(const char *format)
 {
 	size_t i;
+	size_t nb_params;
 
+	nb_params = 0;
 	i = 0;
 	while (format[i])
 	{
@@ -224,15 +226,48 @@ size_t	ft_nb_params(const char *format)
 	return (nb_params);
 }
 
-char	ft_find_type(char *str)
+char	ft_find_type(const char *str)
 {
 	size_t i;
-	int boolean;
 
 	i = 0;
 	while (str[i])
 	{
-		if (str[i] == '%' || str[i] == '*' && ft_isdigit(str[i + 1]) == 0)
-			if (str[i + 1];
+		if (str[i] == 'd' || str[i] == 'i' || str[i] == 'c' || str[i] == 's'
+		|| str[i] == 'u' || str[i] == 'x'|| str[i] == 'X' || str[i] == 'p')
+			break ;
 		i++;
 	}
+	return (str[i]);
+}
+
+size_t	ft_index(const char *str, const char *format)
+{
+	size_t i;
+
+	i = 0;
+//	if (ft_strlen(str) == ft_strlen(format))
+//		return (0);
+	while (str[i])
+	{
+		if (str[i] == 'd' || str[i] == 'i' || str[i] == 'c' || str[i] == 's'
+		|| str[i] == 'u' || str[i] == 'x'|| str[i] == 'X' || str[i] == 'p')
+			break ;
+		i++;
+	}
+	printf("ft_index %zu\n", i + 1);
+	return (i + 1);
+}
+
+char	*char_to_s(int x)
+{
+	char c;
+	char *s;
+
+	if (!(s = malloc(sizeof(char) * 2)))
+		return (0);
+	c = x;
+	s[0] = c;
+	s[1] = '\0';
+	return (s);
+}
