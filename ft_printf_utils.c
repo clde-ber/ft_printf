@@ -226,7 +226,7 @@ size_t	ft_nb_params(const char *format)
 	return (nb_params);
 }
 
-char	ft_find_type(const char *str)
+char	ft_type(const char *str)
 {
 	size_t i;
 
@@ -246,8 +246,6 @@ size_t	ft_index(const char *str, const char *format)
 	size_t i;
 
 	i = 0;
-//	if (ft_strlen(str) == ft_strlen(format))
-//		return (0);
 	while (str[i])
 	{
 		if (str[i] == 'd' || str[i] == 'i' || str[i] == 'c' || str[i] == 's'
@@ -333,4 +331,23 @@ char	*revstr(char *str)
 	newstr[j] = '\0';
 	printf("newstr %s\n", newstr);
 	return (newstr);
+}
+
+const char	*extract_arg(size_t i, const char *str, va_list args, char *format)
+{
+		if (ft_type(&format[i]) == 's')
+			return (ft_strjoin(str, va_arg(args, char *)));
+		if (ft_type(&format[i]) == 'd' || ft_type(&format[i]) == 'i' || ft_type(&format[i]) == 'c')
+			return (ft_type(&format[i]) != 'c') ? ft_strjoin(str, ft_itoa(va_arg(args, int))) :
+			ft_strjoin(str, char_to_s((unsigned char)va_arg(args, int)));
+		if (ft_type(&format[i]) == 'u')
+			return (ft_strjoin(str, ft_itoa(va_arg(args, unsigned int))));
+		if (ft_type(&format[i]) == 'x' || ft_type(&format[i]) == 'X')
+			return (ft_strjoin(str, to_hex(ft_type(&format[i]), va_arg(args, unsigned int), "0123456789abcdef")));
+		if (ft_type(&format[i]) == 'p')
+			return (ft_strjoin(str, ft_itoa(va_arg(args, int))));
+		i += ft_index(&format[i], format);
+		printf("%zu\n", i);
+		printf("str %s\n", str);
+	return (str);
 }
