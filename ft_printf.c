@@ -11,19 +11,7 @@ int	ft_printf(const char *format, ...)
 	str = ft_strjoin("", "");
 	while (i < ft_strlen(format) && ft_format(format))
 	{
-		if (ft_find_type(&format[i]) == 's')
-			str = ft_strjoin(str, va_arg(args, char *));
-		if (ft_find_type(&format[i]) == 'd' || ft_find_type(&format[i]) == 'i'
-		|| ft_find_type(&format[i]) == 'c')
-			str = (ft_find_type(&format[i]) != 'c') ? ft_strjoin(str, ft_itoa(va_arg(args, int)))
-			: ft_strjoin(str, char_to_s((unsigned char)va_arg(args, int)));
-		if (ft_find_type(&format[i]) == 'u')
-			str = ft_strjoin(str, ft_itoa(va_arg(args, unsigned int)));
-		if (ft_find_type(&format[i]) == 'x' || ft_find_type(&format[i]) == 'X')
-			str = ft_strjoin(str, to_hex(ft_find_type(&format[i]),
-			va_arg(args, unsigned int), "0123456789abcdef"));
-		if (ft_find_type(&format[i]) == 'p')
-			str = ft_strjoin(str, ft_itoa(va_arg(args, int)));
+		str = extract_arg(i, str, args, format);
 		i += ft_index(&format[i], format);
 		str = (i != ft_strlen(format)) ? ft_strjoin(str, ", ") : str;
 		printf("%zu\n", i);
