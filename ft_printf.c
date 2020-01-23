@@ -20,7 +20,8 @@ int	ft_printf(const char *format, ...)
 		if (ft_find_type(&format[i]) == 'u')
 			str = ft_strjoin(str, ft_itoa(va_arg(args, unsigned int)));
 		if (ft_find_type(&format[i]) == 'x' || ft_find_type(&format[i]) == 'X')
-			str = ft_strjoin(str, to_hex(va_arg(args, unsigned int), "0123456789abcdef"));
+			str = ft_strjoin(str, to_hex(ft_find_type(&format[i]),
+			va_arg(args, unsigned int), "0123456789abcdef"));
 		if (ft_find_type(&format[i]) == 'p')
 			str = ft_strjoin(str, ft_itoa(va_arg(args, int)));
 		i += ft_index(&format[i], format);
