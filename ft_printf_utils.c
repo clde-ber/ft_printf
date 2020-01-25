@@ -65,33 +65,38 @@ const char	*ft_strjoin(const char *s1, const char *s2)
 	while (s2[++j])
 		ptr[i + j] = s2[j];
 	ptr[i + j] = '\0';
-//	free (s2);
-//	free(s1);
 	return ((const char *)ptr);
 }
 
-const char	*find_param(const char *format, const char *params)
+char	**ft_order_params(size_t j, const char *params, const char *format)
 {
-	size_t find_arg;
-	int i;
+	char **tmp;
+	char **tmp_ordered;
+	size_t i;
+	size_t k;
 
-	find_arg = 1;
+	i = 0;
+	k = -1;
+	tmp = ft_split(params, ',');
+	tmp_ordered = ft_split(params, ',');
+	while (tmp[i])
+	{
+		printf("i = %zu\n", i);
+		printf("tmp[i] %s\n", tmp[i]);
+		i++;
+	}
 	i = -1;
 	while (format[++i])
 		if (ft_isdigit(format[i]))
-		{
-			find_arg = format[i] - 48;
-			break ;
-		}
-	i = -1;
-		while (params[++i + 1] && find_arg > 1)
-			find_arg = (params[i] == ',' && params[i + 1] == ' ') ? --find_arg : find_arg;
-		params = (const char *)ft_memmove(params, &params[i + 1], i);
-		i = 0;
-		while(params[i++])
-			if (params[i] == '\0' || params[i] == ',')
-			((char *)params)[i] = '\0';
-		return (params[0] == '\0') ? 0 : params;
+			tmp_ordered[++k] = tmp[format[i] - 48 - 1];
+	k = 0;
+	while (tmp_ordered[k])
+	{
+		printf("k = %zu\n", k);
+		printf("tmp_ordered[k] %s\n", tmp_ordered[k]);
+		k++;
+	}
+	return (tmp);
 }
 
 const void	*ft_memmove(const void *dst, const void *src, size_t len)
@@ -228,16 +233,13 @@ size_t	ft_nb_params(const char *format)
 
 char	ft_type(const char *str)
 {
-	size_t i;
+	int i;
 
-	i = 0;
-	while (str[i])
-	{
+	i = -1;
+	while (str[++i])
 		if (str[i] == 'd' || str[i] == 'i' || str[i] == 'c' || str[i] == 's'
 		|| str[i] == 'u' || str[i] == 'x'|| str[i] == 'X' || str[i] == 'p')
 			break ;
-		i++;
-	}
 	return (str[i]);
 }
 
@@ -335,19 +337,170 @@ char	*revstr(char *str)
 
 const char	*extract_arg(size_t i, const char *str, va_list args, char *format)
 {
-		if (ft_type(&format[i]) == 's')
-			return (ft_strjoin(str, va_arg(args, char *)));
-		if (ft_type(&format[i]) == 'd' || ft_type(&format[i]) == 'i' || ft_type(&format[i]) == 'c')
-			return (ft_type(&format[i]) != 'c') ? ft_strjoin(str, ft_itoa(va_arg(args, int))) :
-			ft_strjoin(str, char_to_s((unsigned char)va_arg(args, int)));
-		if (ft_type(&format[i]) == 'u')
-			return (ft_strjoin(str, ft_itoa(va_arg(args, unsigned int))));
-		if (ft_type(&format[i]) == 'x' || ft_type(&format[i]) == 'X')
-			return (ft_strjoin(str, to_hex(ft_type(&format[i]), va_arg(args, unsigned int), "0123456789abcdef")));
-		if (ft_type(&format[i]) == 'p')
-			return (ft_strjoin(str, ft_itoa(va_arg(args, int))));
+	if (ft_type(&format[i]) == 's')
+		return (ft_strjoin(str, va_arg(args, char *)));
+	if (ft_type(&format[i]) == 'd' || ft_type(&format[i]) == 'i' || ft_type(&format[i]) == 'c')
+		return (ft_type(&format[i]) != 'c') ? ft_strjoin(str, ft_itoa(va_arg(args, int))) : ft_strjoin(str, char_to_s((unsigned char)va_arg(args, int)));
+	if (ft_type(&format[i]) == 'u')
+		return (ft_strjoin(str, ft_itoa(va_arg(args, unsigned int))));
+	if (ft_type(&format[i]) == 'x' || ft_type(&format[i]) == 'X')
+		return (ft_strjoin(str, to_hex(ft_type(&format[i]), va_arg(args, unsigned int), "0123456789abcdef")));
+	if (ft_type(&format[i]) == 'p')
+		return (ft_strjoin(str, ft_itoa(va_arg(args, int))));
 		i += ft_index(&format[i], format);
 		printf("%zu\n", i);
 		printf("str %s\n", str);
 	return (str);
+}
+
+int		ft_is_flag(char c)
+{
+	if (c == '%' || c == '*' || c == '.' || c == '-' || c == '0')
+		return (1);
+	return (0);
+}
+
+char **ft_rewrite_format(const char *format)
+{
+	int i;
+	int j;
+	int nb_str;
+	char **n_format;
+
+	i = -1;
+	j = 1;
+	nb_str = 0;
+	while (format[++i])
+		if (ft_is_flag(format[i]))
+				nb_str++;
+	printf("nb_str %d\n", nb_str);
+	if (!(n_format = malloc(sizeof(char *) * (nb_str + 1))))
+		return (0);
+	i = -1;
+	n_format[nb_str] = 0;
+	while (format[++i])
+		if (ft_isdigit(format[i]))
+			n_format[format[i] - 48 - 1] = ft_strjoin(&format[i - 1], "");
+	return (n_format);
+}
+
+char *ft_replace_format(char **new_format, const char *format, char *n_format)
+{
+	size_t i;
+	size_t j;
+
+	i = -1;
+	j = 1;
+	write(1, "a", 1);
+	while (new_format[++i])
+	{
+		while (new_format[i][++j])
+			if (ft_is_flag(new_format[i][j]))
+				new_format[i][j] = '\0';
+		printf("new_format[i] %s\n", new_format[i]);
+		j = 0;
+		write(1, "a", 1);
+	}
+	j = 0;
+	printf("new_format[1] %s\n", new_format[1]);
+	while(new_format[j])
+	{
+		n_format = (j == 0) ? ft_strjoin(new_format[j], "")
+		: ft_strjoin(n_format, new_format[j]);
+		j++;
+		write(1, "b", 1);
+	}
+	printf("FORMAT %s\n", n_format);
+	return (n_format);
+}
+
+void	*ft_calloc(size_t count, size_t size)
+{
+	size_t	i;
+	void	*ptr;
+
+	i = 0;
+	if (!(ptr = (void *)malloc(count * size)))
+		return (0);
+	while (i < count * size)
+	{
+		((char *)ptr)[i] = 0;
+		i++;
+	}
+	return (ptr);
+}
+
+static size_t	len_wd(char const *str, int c)
+{
+	size_t i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == c)
+			break ;
+		i++;
+	}
+	return (i);
+}
+
+static size_t	count_malloc(char const *s, char c)
+{
+	size_t i;
+	size_t count;
+
+	i = 0;
+	count = 0;
+	if (s[i] == '\0' || c == '\0')
+		return (1);
+	while (s[i])
+	{
+		if (s[i] != c && (s[i + 1] == c || s[i + 1] == '\0'))
+			count++;
+		i++;
+	}
+	return (count);
+}
+
+static void		*ft_free(char **res, int j)
+{
+	int	i;
+
+	i = 0;
+	while (i < j)
+	{
+		free(res[i]);
+		i++;
+	}
+	free(res);
+	return (NULL);
+}
+
+char			**ft_split(char const *s, char c)
+{
+	size_t	i;
+	size_t	j;
+	char	**res;
+
+	i = 0;
+	j = 0;
+	if (!s || !*s)
+		return ((char **)ft_calloc(2, sizeof(char *)));
+	if (!(res = malloc(sizeof(char *) * (count_malloc(s, c) + 1))))
+		return (0);
+	while (i < ft_strlen(s))
+	{
+		while (j < count_malloc(s, c) && s[i] && s[i] != c)
+		{
+			if (!(res[j] = malloc(sizeof(char) * (len_wd(&s[i], c) + 1))))
+				return (ft_free(res, j));
+			res[j] = ft_memmove(res[j], &s[i], len_wd(&s[i], c) + 1);
+			res[j][len_wd(&s[i], c)] = '\0';
+			j++;
+			i += len_wd(&s[i], c);
+		}
+		i++;
+	}
+	res[count_malloc(s, c)] = 0;
+	return (res);
 }
