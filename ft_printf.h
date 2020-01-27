@@ -27,5 +27,6 @@ char			**ft_split(char const *s, char c);
 void	*ft_calloc(size_t count, size_t size);
 char **ft_rewrite_format(const char *format);
 char *ft_replace_format(char **new_format, const char *format, char *n_format);
+int             ft_is_value(char c);
 
 #endif
