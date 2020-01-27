@@ -3,32 +3,34 @@
 int	ft_printf(const char *format, ...)
 {
 	const char *str;
-	char **test;
 	char *n_format;
 	const char **tab;
 	size_t i;
 	size_t j;
 	va_list	args;
 
-	test = ft_rewrite_format(format);
-	printf("%s\n", test[0]);
-	printf("%s\n", test[1]);
-	printf("%s\n", test[2]);
 	n_format = ft_replace_format(ft_rewrite_format(format), format, n_format);
-	i = 0;
+	printf("n_fromat%s\n", n_format);
 	j = 0;
+	i = 0;
+	printf("format ! %s\n", format);
 	va_start(args, format);
 	str = ft_strjoin("", "");
-	while (i < ft_strlen(format) && ft_format(format))
+	while (i < ft_strlen(n_format) && ft_format(n_format))
 	{
-		str = extract_arg(i, str, args, format);
-		i += ft_index(&format[i], format);
-		str = (i != ft_strlen(format)) ? ft_strjoin(str, ",") : str;
+		str = ft_strjoin(extract_arg(i, str, args, n_format), ",");
+		str = (j != 0) ? ft_strjoin(str, extract_arg(i, str, args, n_format)) : str;
+		i += ft_index(&n_format[i], n_format);
 		j++;
-		printf("%zu\n", i);
-		printf("str %s\n", str);
+		printf("STR %s\n", str);
+		printf("i %zu\n", i);
 	}
-	tab = ft_order_params(j, str, format);
+	printf("J %zu\n", j);
+	printf("str %s\n", str);
+	tab = ft_order_params(j, str, n_format);
+	printf("tab[0] %s\n", tab[0]);
+	printf("tab[1] %s\n", tab[1]);
+	printf("tab[2] %s\n", tab[2]);
 	va_end(args);
 	return (0);
 }
