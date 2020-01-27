@@ -86,9 +86,15 @@ char	**ft_order_params(size_t j, const char *params, const char *format)
 		i++;
 	}
 	i = -1;
-	while (format[++i])
-		if (ft_isdigit(format[i]))
-			tmp_ordered[++k] = tmp[format[i] - 48 - 1];
+	while (format[++i + 2])
+		if (ft_isdigit(format[i + 1]) && format[i + 2] == '$' && ft_is_value(format[i]))
+		{
+			tmp_ordered[++k] = tmp[format[i + 1] - 48 - 1];
+			printf("ordered tmp index %d\n", format[i + 1] - 48 - 1);
+			printf("tmp[x] % s\n", tmp[format[i + 1] - 48 - 1]);
+			printf("i = %zu!\n", i);
+		}
+	tmp_ordered[++k] = 0;
 	k = 0;
 	while (tmp_ordered[k])
 	{
@@ -285,8 +291,9 @@ char	*to_hex(char c, unsigned int n, char *base)
 		k = k / ft_strlen(base);
 		i++;
 	}
-	if (!(str = malloc(sizeof(char) * (i + 1))))
+	if (!(str = malloc(sizeof(char) * 1024)))
 		return (0);
+	printf("i === %d\n", i);
 	i = 0;
 	while (n > 0)
 	{
@@ -339,23 +346,25 @@ const char	*extract_arg(size_t i, const char *str, va_list args, char *format)
 {
 	if (ft_type(&format[i]) == 's')
 		return (ft_strjoin(str, va_arg(args, char *)));
-	if (ft_type(&format[i]) == 'd' || ft_type(&format[i]) == 'i' || ft_type(&format[i]) == 'c')
-		return (ft_type(&format[i]) != 'c') ? ft_strjoin(str, ft_itoa(va_arg(args, int))) : ft_strjoin(str, char_to_s((unsigned char)va_arg(args, int)));
+	if (ft_type(&format[i]) == 'd' || ft_type(&format[i]) == 'i' ||
+	ft_type(&format[i]) == 'c')
+		return (ft_type(&format[i]) != 'c') ? ft_strjoin(str, ft_itoa(va_arg(args, int)))
+		: ft_strjoin(str, char_to_s((unsigned char)va_arg(args, int)));
 	if (ft_type(&format[i]) == 'u')
 		return (ft_strjoin(str, ft_itoa(va_arg(args, unsigned int))));
 	if (ft_type(&format[i]) == 'x' || ft_type(&format[i]) == 'X')
-		return (ft_strjoin(str, to_hex(ft_type(&format[i]), va_arg(args, unsigned int), "0123456789abcdef")));
+		return (to_hex(ft_type(&format[i]), va_arg(args, unsigned int), "0123456789abcdef"));
 	if (ft_type(&format[i]) == 'p')
-		return (ft_strjoin(str, ft_itoa(va_arg(args, int))));
+		return (ft_strjoin(str, ft_itoa(va_arg(args, unsigned int))));
 		i += ft_index(&format[i], format);
 		printf("%zu\n", i);
 		printf("str %s\n", str);
 	return (str);
 }
 
-int		ft_is_flag(char c)
+int		ft_is_value(char c)
 {
-	if (c == '%' || c == '*' || c == '.' || c == '-' || c == '0')
+	if (c == '%' || c == '*')
 		return (1);
 	return (0);
 }
@@ -370,17 +379,20 @@ char **ft_rewrite_format(const char *format)
 	i = -1;
 	j = 1;
 	nb_str = 0;
-	while (format[++i])
-		if (ft_is_flag(format[i]))
+	while (format[++i + 2])
+		if (ft_is_value(format[i]) && ft_isdigit(format[i + 1]) && format[i + 2] == '$')
 				nb_str++;
 	printf("nb_str %d\n", nb_str);
 	if (!(n_format = malloc(sizeof(char *) * (nb_str + 1))))
 		return (0);
 	i = -1;
 	n_format[nb_str] = 0;
-	while (format[++i])
-		if (ft_isdigit(format[i]))
-			n_format[format[i] - 48 - 1] = ft_strjoin(&format[i - 1], "");
+	while (format[++i + 2])
+		if (ft_isdigit(format[i + 1]) && format[i + 2] == '$' && ft_is_value(format[i]))
+		{	n_format[format[i + 1] - 48 - 1] = ft_strjoin(&format[i], "");
+			printf("attention %s\n", n_format[format[i + 1] - 48 - 1]);
+			printf("index %d\n", format[i + 1] - 48 - 1);
+		}
 	return (n_format);
 }
 
@@ -391,27 +403,28 @@ char *ft_replace_format(char **new_format, const char *format, char *n_format)
 
 	i = -1;
 	j = 1;
-	write(1, "a", 1);
-	while (new_format[++i])
-	{
-		while (new_format[i][++j])
-			if (ft_is_flag(new_format[i][j]))
-				new_format[i][j] = '\0';
-		printf("new_format[i] %s\n", new_format[i]);
-		j = 0;
-		write(1, "a", 1);
-	}
-	j = 0;
-	printf("new_format[1] %s\n", new_format[1]);
-	while(new_format[j])
-	{
-		n_format = (j == 0) ? ft_strjoin(new_format[j], "")
-		: ft_strjoin(n_format, new_format[j]);
-		j++;
-		write(1, "b", 1);
-	}
-	printf("FORMAT %s\n", n_format);
-	return (n_format);
+	while (format[++i])
+		if (ft_isdigit(format[i + 1]) && format[i + 2] == '$' && ft_is_value(format[i]))
+		{
+			i = -1;
+			while (new_format[++i])
+			{
+				while (new_format[i][++j])
+					if (ft_is_value(new_format[i][j]))
+						new_format[i][j] = '\0';
+				j = 0;
+			}
+			while(new_format[j])
+			{
+				n_format = (j == 0) ? ft_strjoin(new_format[j], "")
+				: ft_strjoin(n_format, new_format[j]);
+				j++;
+			}
+			printf("FORMAT %s\n", n_format);
+			return (n_format);
+		}
+	printf("\na\n");
+	return (format);
 }
 
 void	*ft_calloc(size_t count, size_t size)
