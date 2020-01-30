@@ -9,28 +9,18 @@ int	ft_printf(const char *format, ...)
 	size_t j;
 	va_list	args;
 
-	n_format = ft_replace_format(ft_rewrite_format(format), format, n_format);
-	printf("n_fromat%s\n", n_format);
 	j = 0;
-	i = 0;
+	i = -1;
 	printf("format ! %s\n", format);
 	va_start(args, format);
 	str = ft_strjoin("", "");
-	while (i < ft_strlen(n_format) && ft_format(n_format))
-	{
-		str = ft_strjoin(extract_arg(i, str, args, n_format), ",");
-		str = (j != 0) ? ft_strjoin(str, extract_arg(i, str, args, n_format)) : str;
-		i += ft_index(&n_format[i], n_format);
-		j++;
-		printf("STR %s\n", str);
-		printf("i %zu\n", i);
-	}
+	str = ft_fill_str(str, format, args);
+	tab = ft_split(str, ',');
+	printf("%s\n", str);
+	while (tab[++i])
+		printf("tab[i] = %s\n", tab[i]);
 	printf("J %zu\n", j);
 	printf("str %s\n", str);
-	tab = ft_order_params(j, str, n_format);
-	printf("tab[0] %s\n", tab[0]);
-	printf("tab[1] %s\n", tab[1]);
-	printf("tab[2] %s\n", tab[2]);
 	va_end(args);
 	return (0);
 }
