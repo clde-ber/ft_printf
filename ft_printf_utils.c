@@ -1,74 +1,3 @@
-#include "ft_printf.h"
-
-int	ft_printf(const char *format, ...)
-{
-	const char *str;
-	char *n_format;
-	const char **tab;
-	size_t i;
-	size_t j;
-	va_list	args;
-
-	j = 0;
-	i = -1;
-	printf("format ! %s\n", format);
-	va_start(args, format);
-	str = ft_strjoin("", "");
-	str = ft_fill_str(str, format, args);
-	tab = ft_split(str, ',');
-	printf("%s\n", str);
-	while (tab[++i])
-		printf("tab[i] = %s\n", tab[i]);
-	printf("J %zu\n", j);
-	printf("str %s\n", str);
-	va_end(args);
-	return (0);
-}
-
-/*#include "ft_printf.h"
-int	ft_printf(const char *format, ...)
-{
-	int i;
-	int j;
-	const char **stock;
-	const char *output;
-	int	*fct_ptr;
-	i = -1;
-	j = -1;
-	while (format[++i])
-	{
-		if (check_format(format))
-			if (find_conv_o_flag(format[i]))
-			{
-				fct_ptr = find_conv_o_flag(format[i]);
-				stock[j] = find_param(format, str);
-				stock[j] = app_fct(stock[j], &fct_ptr);
-				j++;
-			}
-		else
-			return 0;
-	}
-	stock[j] = 0;
-	while (stock[j])
-		output = (j == 0) ? ft_strjoin(stock[j], "") : ft_strjoin(output, stock[j]);
-	return (ft_strlen(output));
-	printf("%d\n", check_format(format));
-	printf("%s\n", params);
-	ft_transform_printf(format, ...);
-	printf("%s\n", find_param(format, params));
-}*/
-➜  ft_printf git:(master) ✗ cat ft_printf_utils.c
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_printf_utils.c                                  :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: clde-ber <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/01/22 12:15:37 by clde-ber          #+#    #+#             */
-/*   Updated: 2020/01/30 14:21:43 by clde-ber         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "ft_printf.h"
 
@@ -140,6 +69,32 @@ const char	*ft_strjoin(const char *s1, const char *s2)
 	ptr[i + j] = '\0';
 	return ((const char *)ptr);
 }
+
+const char	*join_three(const char *s1, const char *s2, const char *s3)
+{
+	size_t	i;
+	size_t	j;
+	size_t	k;
+	char	*ptr;
+
+	i = -1;
+	j = -1;
+	k = -1;
+	if (!s1 || !s2 || !s3)
+		return (0);
+	if (!(ptr = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2)
+	+ ft_strlen(s3) + 1))))
+		return (0);
+	while (s1[++i])
+		ptr[i] = s1[i];
+	while (s2[++j])
+		ptr[i + j] = s2[j];
+	while (s3[++k])
+		ptr[i + j + k] = s3[k];
+	ptr[i + j + k] = '\0';
+	return ((const char *)ptr);
+}
+
 
 const void	*ft_memmove(const void *dst, const void *src, size_t len)
 {
@@ -300,7 +255,10 @@ size_t	ft_index(const char *str, const char *format)
 		|| str[i] == 'u' || str[i] == 'x'|| str[i] == 'X' || str[i] == 'p')
 			break ;
 		if (str[i] == '.' && (str[i + 1] == '*' || ft_isdigit(str[i + 1])))
+		{
+			i++;
 			break ;
+		}
 		if (str[i] == '*' && ft_isdigit(str[i + 1]))
 			break ;
 		if (str[i] == '*')
@@ -461,8 +419,7 @@ char *ft_fill_str(char *str, const char *format, va_list args)
 	str = ft_strjoin("", "");
 	while (i < ft_strlen(format))
 	{
-		str = ft_strjoin(str, extract_arg(i, str, args, format));
-		str = ft_strjoin(str, ",");
+		str = join_three(str, ",", extract_arg(i, str, args, format));
 		i += ft_index(&format[i], format);
 		printf("STR %s\n", str);
 		printf("i %zu\n", i);
