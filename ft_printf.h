@@ -28,5 +28,8 @@ void	*ft_calloc(size_t count, size_t size);
 char **ft_rewrite_format(const char *format);
 char *ft_replace_format(char **new_format, const char *format, char *n_format);
 int             ft_is_value(char c);
+char *ft_fill_str(char *str, const char *format, va_list args);
+const char *ft_precision(size_t i, const char *format, va_list args);
+const char *ft_spacing(size_t i, const char *format, va_list args);
 
 #endif
