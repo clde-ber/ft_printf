@@ -31,5 +31,6 @@ int             ft_is_value(char c);
 char *ft_fill_str(char *str, const char *format, va_list args);
 const char *ft_precision(size_t i, const char *format, va_list args);
 const char *ft_spacing(size_t i, const char *format, va_list args);
+const char	*join_three(const char *s1, const char *s2, const char *s3);
 
 #endif
