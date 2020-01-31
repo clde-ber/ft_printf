@@ -22,15 +22,18 @@ char	*char_to_s(int x);
 char	*to_hex(char c, unsigned int n, char *base);
 char	*revstr(char *str);
 char *str_toupper(char *str);
-const char	*extract_arg(size_t i, const char *str, va_list args, char *format);
+const char	*extract_arg(size_t i, va_list args, char *format);
 char			**ft_split(char const *s, char c);
 void	*ft_calloc(size_t count, size_t size);
 char **ft_rewrite_format(const char *format);
 char *ft_replace_format(char **new_format, const char *format, char *n_format);
 int             ft_is_value(char c);
-char *ft_fill_str(char *str, const char *format, va_list args);
+char *ft_fill_str(const char *format, va_list args);
 const char *ft_precision(size_t i, const char *format, va_list args);
 const char *ft_spacing(size_t i, const char *format, va_list args);
-const char	*join_three(const char *s1, const char *s2, const char *s3);
+const char **ft_modify_strings(size_t i, size_t k, size_t j, char **params);
+const char *replace_spaces(char *str);
+const char *ft_spaces(size_t value, char *param);
+size_t ft_find_arg(char **params);
 
 #endif
