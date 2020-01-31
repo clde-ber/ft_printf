@@ -2,7 +2,6 @@
 
 int	ft_printf(const char *format, ...)
 {
-	const char *str;
 	char *n_format;
 	const char **tab;
 	size_t i;
@@ -13,14 +12,10 @@ int	ft_printf(const char *format, ...)
 	i = -1;
 	printf("format ! %s\n", format);
 	va_start(args, format);
-	str = ft_strjoin("", "");
-	str = ft_fill_str(str, format, args);
-	tab = ft_split(str, ',');
-	printf("%s\n", str);
+	tab = ft_fill_str(format, args);
 	while (tab[++i])
-		printf("tab[i] = %s\n", tab[i]);
-	printf("J %zu\n", j);
-	printf("str %s\n", str);
+	{	printf("i= %zu\n", i);
+		printf("tab[i] %s\n", tab[i]);}
 	va_end(args);
 	return (0);
 }
