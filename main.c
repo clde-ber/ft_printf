@@ -1,8 +1,12 @@
 #include "ft_printf.h"
 int main()
 {
-	ft_printf("%d%X%c", 25631654, 1000000, 'a');
-	unsigned int i;
+//	ft_printf("%d%X%x", 25631654, 1000000, 2358);
+//	printf("%d%X%x", 25631654, 1000000, 2358);
+	printf("ft_itoa %s\n", ft_itoa(1));
+	printf("%*.*d %*.*s\n", 1, 50, 5000, 1, 0, "hey");
+	ft_printf("%*.*d %*.*s\n", 1, 50, 5000, 1, 0, "hey");
+
 
 /*	i = 400000;
 	printf("%d", i);
