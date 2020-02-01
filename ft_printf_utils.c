@@ -405,7 +405,7 @@ char *ft_fill_str(const char *format, va_list args)
 		printf("i %zu\n", i);
 	}
 	params[j] = 0;
-	new_params = ft_modify_strings(-1, 0, j, params);
+	new_params = ft_modify_strings(0, 0, j, params);
 	return (new_params);
 }
 
@@ -414,23 +414,25 @@ const char **ft_modify_strings(size_t i, size_t k, size_t j, char **params)
 	size_t nb;
 	size_t index;
 	size_t value;
-	size_t find_index;
 	char **upd_params;
 
-	nb = -1;
+	nb = 0;
 	index = 0;
-	find_index = -1;
 	if (!(upd_params = malloc(sizeof(char *) * (j + 1))))
 		return (0);
-	printf("index = %zu\n", ft_find_arg(&params[++find_index]));
-	while (params[++i] && ++nb < j && (index += ft_find_arg(&params[++find_index]) < j))
+	printf("j = %zu\n", j);
+		while ((index += ft_find_arg(j, index, params) < j) && i + 1 < j)
 	{
+		printf("index = %zu\n", index);
 		if (params[i][0] == '.')
 		{
 			value = ft_atoi(&params[i][k + 1]);
+			printf("value %zu\n", value);
 			upd_params[nb] = ft_strjoin(params[index], "");
+			printf("nb1 %zu\n", nb);
 			if (value - 1 < ft_strlen(params[index]))
 				upd_params[nb][value] = '\0';
+			nb++;
 		}
 		if (params[i][0] == '*')
 		{
@@ -438,30 +440,40 @@ const char **ft_modify_strings(size_t i, size_t k, size_t j, char **params)
 			upd_params[nb] = (value > ft_strlen(params[index])) ?
 			ft_strjoin(ft_spaces(value, params[index]), params[index])
 			: ft_strjoin(params[index], "");
+			nb++;
 		}
 		if (params[i][0] == '0')
+		{
 			upd_params[nb] = replace_spaces(params[index]);
+			nb++;
+		}
 		if (params[i][0] == '-')
-			upd_params[nb] = ft_strjoin(params[index], ft_spaces(value, params[index]));
+		{
+			upd_params[nb] = ft_strjoin(params[index], ft_spaces(value,
+			params[index]));
+			nb++;
+		}
+		i = (params[i][0] == '.' && params[i + 1][0] == '*') ? ++i + 1 : ++i;
+		printf("indice %zu\n", i);
 	}
+	printf("nb = %zu\n", nb);
 	upd_params[nb] = 0;
 		return (upd_params);
 }
 
-size_t ft_find_arg(char **params)
+size_t ft_find_arg(size_t j, size_t find_index, char **params)
 {
 	size_t i;
-	size_t j;
 
 	i = 0;
-	j = 0;
-	while (params[i])
+	while (find_index < j)
 	{
-		if (params[i][j] != '.' && params[i][j] != '*' && params[i][j] != '0'
-		&& params[i][j] != '-')
-			return (i);
-		i++;
+		if (params[find_index][i] != '.' && params[find_index][i] != '*'
+		&& params[find_index][i] != '0' && params[find_index][i] != '-')
+			break ;
+		find_index++;
 	}
+		return (find_index);
 }
 
 const char *replace_spaces(char *str)
