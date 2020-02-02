@@ -9,13 +9,14 @@ int	ft_printf(const char *format, ...)
 	va_list	args;
 
 	j = 0;
-	i = -1;
+	i = 0;
 	printf("format ! %s\n", format);
 	va_start(args, format);
 	tab = ft_fill_str(format, args);
-	while (tab[++i])
+	while (tab[i])
 	{	printf("i= %zu\n", i);
-		printf("tab[i] %s\n", tab[i]);}
+		printf("tab[i] %s\n", tab[i]);
+	i++;}
 	va_end(args);
 	return (0);
 }
