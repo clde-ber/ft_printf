@@ -6,17 +6,21 @@ int	ft_printf(const char *format, ...)
 	const char **tab;
 	size_t i;
 	size_t j;
+	size_t nb_args;
 	va_list	args;
 
-	j = 0;
-	i = 0;
+	j = -1;
+	i = -1;
+	nb_args = 0;
 	printf("format ! %s\n", format);
 	va_start(args, format);
-	tab = ft_fill_str(format, args);
-	while (tab[i])
-	{	printf("i= %zu\n", i);
-		printf("tab[i] %s\n", tab[i]);
-	i++;}
+	while (format[++j])
+		if (format[j] == '%')
+			nb_args++;
+	printf("NB ARGS %zu\n", nb_args);
+	tab = ft_fill_str(nb_args, format, args);
+	while (tab[++i] && i < j)
+		ft_putstr(tab[i]);
 	va_end(args);
 	return (0);
 }
