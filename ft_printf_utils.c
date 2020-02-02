@@ -402,7 +402,7 @@ char *ft_fill_str(const char *format, va_list args)
 		i += ft_index(&format[i], format);
 		printf("params[j]  %s\n", params[j]);
 		j++;
-		printf("i %zu\n", i);
+		printf("J = %zu\n", j);
 	}
 	params[j] = 0;
 	new_params = ft_modify_strings(0, 0, j, params);
@@ -417,15 +417,16 @@ const char **ft_modify_strings(size_t i, size_t k, size_t j, char **params)
 	char **upd_params;
 
 	nb = 0;
-	index = 0;
+	index = -1;
 	if (!(upd_params = malloc(sizeof(char *) * (j + 1))))
 		return (0);
 	printf("j = %zu\n", j);
-		while ((index += ft_find_arg(j, index, params) < j) && i + 1 < j)
-	{
-		printf("index = %zu\n", index);
+		while (i < j)
+		{
+		printf("index = %zu\n", i);
 		if (params[i][0] == '.')
 		{
+			index = ft_find_arg(j, ++index, params) ;
 			value = ft_atoi(&params[i][k + 1]);
 			printf("value %zu\n", value);
 			upd_params[nb] = ft_strjoin(params[index], "");
@@ -436,26 +437,31 @@ const char **ft_modify_strings(size_t i, size_t k, size_t j, char **params)
 		}
 		if (params[i][0] == '*')
 		{
+			index = ft_find_arg(j, ++index, params);
 			value = ft_atoi(&params[i][k + 1]);
 			upd_params[nb] = (value > ft_strlen(params[index])) ?
 			ft_strjoin(ft_spaces(value, params[index]), params[index])
 			: ft_strjoin(params[index], "");
+			printf("nb 2 %zu\n", nb);
 			nb++;
 		}
 		if (params[i][0] == '0')
 		{
+			index = ft_find_arg(j, ++index, params);
 			upd_params[nb] = replace_spaces(params[index]);
 			nb++;
 		}
 		if (params[i][0] == '-')
 		{
+			index = ft_find_arg(j, ++index, params);
 			upd_params[nb] = ft_strjoin(params[index], ft_spaces(value,
 			params[index]));
 			nb++;
 		}
-		i = (params[i][0] == '.' && params[i + 1][0] == '*') ? ++i + 1 : ++i;
+		printf("params[i][0] %c\n", params[i][0]);
+		i++;
 		printf("indice %zu\n", i);
-	}
+			}
 	printf("nb = %zu\n", nb);
 	upd_params[nb] = 0;
 		return (upd_params);
@@ -468,6 +474,8 @@ size_t ft_find_arg(size_t j, size_t find_index, char **params)
 	i = 0;
 	while (find_index < j)
 	{
+		printf("params[f_i][i] %c\n", params[find_index][i]);
+		printf("find_index %zu\n", find_index);
 		if (params[find_index][i] != '.' && params[find_index][i] != '*'
 		&& params[find_index][i] != '0' && params[find_index][i] != '-')
 			break ;
