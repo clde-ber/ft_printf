@@ -25,7 +25,7 @@ int	ft_printf(const char *format, ...)
 	}
 	tab = ft_fill_str(nb_args, &format[i], args);
 	i = 0;
-	while (i < nb_args)
+	while (i + 1 < nb_args)
 	{
 		ft_putstr(tab[i]);
 		i++;
