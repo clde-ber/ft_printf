@@ -15,11 +15,16 @@ int	ft_printf(const char *format, ...)
 	while (format[++j])
 	{
 		if (format[j] == '%')
+		{
 			nb_args++;
+			if (nb_args == 1)
+				i = j;
+		}
 		if (nb_args == 0)
 		ft_putchar(format[j]);
 	}
-	tab = ft_fill_str(nb_args, format, args);
+	tab = ft_fill_str(nb_args, &format[i], args);
+	i = 0;
 	while (i < nb_args)
 	{
 		ft_putstr(tab[i]);
