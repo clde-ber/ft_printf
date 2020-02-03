@@ -2,28 +2,39 @@
 
 int	ft_printf(const char *format, ...)
 {
-	char *n_format;
 	const char **tab;
 	size_t i;
 	size_t j;
-	size_t nb_args;
+	int nb_args;
 	va_list	args;
 
 	j = -1;
 	i = 0;
 	nb_args = 0;
-	printf("format ! %s\n", format);
 	va_start(args, format);
 	while (format[++j])
+	{
 		if (format[j] == '%')
 			nb_args++;
-	printf("NB ARGS %zu\n", nb_args);
+		if (nb_args == 0)
+		ft_putchar(format[j]);
+	}
 	tab = ft_fill_str(nb_args, format, args);
-	while (tab[i])
+	while (i < nb_args)
 	{
 		ft_putstr(tab[i]);
 		i++;
 	}
+	j = -1;
+	while (format[++j] && nb_args)
+		if (format[j] == '%')
+			nb_args--;
+		while (format[j] == '.' || format[j] == '*' || format[j] == '0'
+		|| format[j] == '-' || format[j] == 'd' || format[j] == 'i' ||
+		format[j] == 'c' || format[j] == 's' || format[j] == 'u' ||
+		format[j] == 'x'|| format[j] == 'X' || format[j] == 'p')
+			j++;
+	ft_putstr(&format[j]);
 	va_end(args);
 	return (0);
 }
