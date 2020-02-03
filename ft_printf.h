@@ -35,6 +35,5 @@ const char **ft_modify_strings(size_t nb_args, size_t i, size_t j, char **params
 const char *replace_spaces(char *str);
 const char *ft_spaces(size_t value, char *param);
 size_t ft_find_arg(size_t j, size_t find_index, char **params);
-void *ft_free(size_t i, char **tab);
 
 #endif
