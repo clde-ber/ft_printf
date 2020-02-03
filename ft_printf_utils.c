@@ -270,7 +270,6 @@ char	*to_hex(char c, unsigned int n, char *base)
 	}
 	if (!(str = malloc(sizeof(char) * 1024)))
 		return (0);
-	printf("i === %d\n", i);
 	i = 0;
 	while (n > 0)
 	{
@@ -315,7 +314,6 @@ char	*revstr(char *str)
 		j++;
 	}
 	newstr[j] = '\0';
-	printf("newstr %s\n", newstr);
 	return (newstr);
 }
 
@@ -345,7 +343,6 @@ const char	*extract_arg(size_t i, va_list args, char *format)
 	if (ft_type(&format[i]) == '-')
 		return (ft_strjoin("-", ""));
 	i += ft_index(&format[i], format);
-	printf("i = %zu\n", i);
 }
 
 const char *ft_spacing(size_t i, const char *format, va_list args)
@@ -460,7 +457,7 @@ const char **ft_modify_strings(size_t nb_args, size_t i, size_t j, char **params
 		i++;
 			}
 		if (nb)
-			upd_params[nb - 1] = 0;
+		upd_params[nb - 1] = 0;
 		return (upd_params);
 }
 
@@ -516,97 +513,6 @@ int		ft_is_value(char c)
 	return (0);
 }
 
-void	*ft_calloc(size_t count, size_t size)
-{
-	size_t	i;
-	void	*ptr;
-
-	i = 0;
-	if (!(ptr = (void *)malloc(count * size)))
-		return (0);
-	while (i < count * size)
-	{
-		((char *)ptr)[i] = 0;
-		i++;
-	}
-	return (ptr);
-}
-
-static size_t	len_wd(char const *str, int c)
-{
-	size_t i;
-
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == c)
-			break ;
-		i++;
-	}
-	return (i);
-}
-
-static size_t	count_malloc(char const *s, char c)
-{
-	size_t i;
-	size_t count;
-
-	i = 0;
-	count = 0;
-	if (s[i] == '\0' || c == '\0')
-		return (1);
-	while (s[i])
-	{
-		if (s[i] != c && (s[i + 1] == c || s[i + 1] == '\0'))
-			count++;
-		i++;
-	}
-	return (count);
-}
-
-static void		*ft_free(char **res, int j)
-{
-	int	i;
-
-	i = 0;
-	while (i < j)
-	{
-		free(res[i]);
-		i++;
-	}
-	free(res);
-	return (NULL);
-}
-
-char			**ft_split(char const *s, char c)
-{
-	size_t	i;
-	size_t	j;
-	char	**res;
-
-	i = 0;
-	j = 0;
-	if (!s || !*s)
-		return ((char **)ft_calloc(2, sizeof(char *)));
-	if (!(res = malloc(sizeof(char *) * (count_malloc(s, c) + 1))))
-		return (0);
-	while (i < ft_strlen(s))
-	{
-		while (j < count_malloc(s, c) && s[i] && s[i] != c)
-		{
-			if (!(res[j] = malloc(sizeof(char) * (len_wd(&s[i], c) + 1))))
-				return (ft_free(res, j));
-			res[j] = ft_memmove(res[j], &s[i], len_wd(&s[i], c) + 1);
-			res[j][len_wd(&s[i], c)] = '\0';
-			j++;
-			i += len_wd(&s[i], c);
-		}
-		i++;
-	}
-	res[count_malloc(s, c)] = 0;
-	return (res);
-}
-
 void ft_putchar(char c)
 {
 	write(1, &c, sizeof(char));
@@ -625,4 +531,18 @@ void ft_putstr(char *str)
 			i++;
 		}
 	}
+}
+
+void *ft_free(size_t i, char **tab)
+{
+	size_t j;
+
+	j = 0;
+	while (j < i)
+	{
+		free(tab[j]);
+		j++;
+	}
+	free(tab[j]);
+	free(tab);
 }
