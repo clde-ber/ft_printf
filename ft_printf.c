@@ -10,7 +10,7 @@ int	ft_printf(const char *format, ...)
 	va_list	args;
 
 	j = -1;
-	i = -1;
+	i = 0;
 	nb_args = 0;
 	printf("format ! %s\n", format);
 	va_start(args, format);
@@ -19,8 +19,11 @@ int	ft_printf(const char *format, ...)
 			nb_args++;
 	printf("NB ARGS %zu\n", nb_args);
 	tab = ft_fill_str(nb_args, format, args);
-	while (tab[++i] && i < j)
+	while (tab[i])
+	{
 		ft_putstr(tab[i]);
+		i++;
+	}
 	va_end(args);
 	return (0);
 }
