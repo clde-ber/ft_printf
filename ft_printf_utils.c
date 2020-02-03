@@ -222,7 +222,7 @@ size_t	ft_index(const char *str, const char *format)
 	size_t i;
 
 	i = 0;
-	str = format;
+	printf("format :) %s\n", str);
 	while (str[i])
 	{
 		if (str[i] == 'd' || str[i] == 'i' || str[i] == 'c' || str[i] == 's'
@@ -397,7 +397,7 @@ char *ft_fill_str(size_t nb_args, const char *format, va_list args)
 	j = 0;
 	if (!(params = malloc(sizeof(char *) * 1024)))
 		return (0);
-	while (i < ft_strlen(format) && format[i])
+	while (i < ft_strlen(format))
 	{
 		params[j] = ft_strjoin(extract_arg(i, args, format), "");
 		i += ft_index(&format[i], format);
@@ -421,12 +421,11 @@ const char **ft_modify_strings(size_t nb_args, size_t i, size_t j, char **params
 	index = -1;
 	if (!(upd_params = malloc(sizeof(char *) * (nb_args + 1))))
 		return (0);
-	upd_params[nb_args] = 0;
 	printf("j = %zu\n", j);
 		while (i < j && nb < nb_args)
 		{
 		printf("index = %zu\n", i);
-		if (params[i][0] == '.')
+		if (params[i][0] == '.' && nb < nb_args)
 		{
 			index = ft_find_arg(j, ++index, params);
 			value = ft_atoi(&params[i][1]);
@@ -450,33 +449,39 @@ const char **ft_modify_strings(size_t nb_args, size_t i, size_t j, char **params
 			}
 			nb++;
 		}
-		if (params[i][0] == '*')
+		if (params[i][0] == '*' && nb < nb_args)
 		{
 			nb = (i > 0 && params[i - 1][0] == '.') ?
-			nb : nb++;
+			nb : ++nb;
+			if (nb < nb_args)
+			{
+			printf("NUMBER %zu\n", nb);
 			value = ft_atoi(&params[i][1]);
 			upd_params[nb] = (value > ft_strlen(params[index])) ?
 			ft_strjoin(ft_spaces(value, params[index]), params[index])
 			: ft_strjoin(params[index], "");
 			printf("nb 2 %zu\n", nb);
+			}
 		}
-		if (params[i][0] == '0')
+		if (params[i][0] == '0' && nb < nb_args)
 		{
 			index = ft_find_arg(j, ++index, params);
 			upd_params[nb] = replace_spaces(params[index]);
 			nb++;
 		}
-		if (params[i][0] == '-')
+		if (params[i][0] == '-' && nb < nb_args)
 		{
 			index = ft_find_arg(j, ++index, params);
 			upd_params[nb] = ft_strjoin(params[index], ft_spaces(value,
 			params[index]));
 			nb++;
 		}
+		printf("nb = %zu\n", nb);
 		printf("params[i][0] %c\n", params[i][0]);
 		i++;
 		printf("indice %zu\n", i);
 			}
+	upd_params[nb] = 0;
 	printf("nb = %zu\n", nb);
 		return (upd_params);
 }
