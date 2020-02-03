@@ -6,13 +6,11 @@ int	ft_printf(const char *format, ...)
 	size_t i;
 	size_t j;
 	int nb_args;
-	int ret;
 	va_list	args;
 
 	j = -1;
 	i = 0;
 	nb_args = 0;
-	ret = 0;
 	va_start(args, format);
 	while (format[++j])
 	{
@@ -23,21 +21,15 @@ int	ft_printf(const char *format, ...)
 				i = j;
 		}
 		if (nb_args == 0)
-		{
-			ft_putchar(format[j]);
-			ret++;
-		}
+		ft_putchar(format[j]);
 	}
 	tab = ft_fill_str(nb_args, &format[i], args);
 	i = 0;
-	while (i + 1 < nb_args)
+	while (i < nb_args)
 	{
 		ft_putstr(tab[i]);
-		ret += ft_strlen(tab[i]);
 		i++;
 	}
-	if (i)
-		ft_free(i, tab);
 	j = -1;
 	while (format[++j] && nb_args)
 		if (format[j] == '%')
@@ -48,10 +40,8 @@ int	ft_printf(const char *format, ...)
 		format[j] == 'x'|| format[j] == 'X' || format[j] == 'p')
 			j++;
 	ft_putstr(&format[j]);
-	ret += ft_strlen(&format[j]);
 	va_end(args);
-	printf("ret = %d\n", ret);
-	return (ret);
+	return (0);
 }
 
 /*#include "ft_printf.h"
