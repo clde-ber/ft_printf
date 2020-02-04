@@ -3,7 +3,7 @@
 int	ft_printf(const char *format, ...)
 {
 	const char **tab;
-	size_t i;
+	int i;
 	size_t j;
 	int nb_args;
 	va_list	args;
@@ -39,26 +39,24 @@ int	ft_printf(const char *format, ...)
 	i = 0;
 	while (i < nb_args)
 	{
-		ft_putstr(tab[i]);
+		ft_putstr((char *)tab[i]);
 		ret += ft_strlen(tab[i]);
 		i++;
 	}
 	j = -1;
-	printf("nb_args %zu\n", nb_args);
 	while (format[++j] && nb_args)
 		if (format[j] == '%' && format[j + 1] == '%')
 			while (format[j] == '%')
 				j++;
 		else if (format[j] == '%')
 			nb_args--;
-	printf("j === %zu\n", j);
 		while (format[j] == '.' || format[j] == '*' || format[j] == '0'
 		|| format[j] == '-' || format[j] == 'd' || format[j] == 'i' ||
 		format[j] == 'c' || format[j] == 's' || format[j] == 'u' ||
 		format[j] == 'x'|| format[j] == 'X' || format[j] == 'p' ||
 		ft_isdigit(format[j]))
 			j++;
-	ft_putstr(&format[j]);
+	ft_putstr((char *)&format[j]);
 	ret += ft_strlen(&format[j]);
 	va_end(args);
 	return (ret);
