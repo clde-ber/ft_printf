@@ -1,116 +1,5 @@
 #include "ft_printf.h"
 
-int	ft_printf(const char *format, ...)
-{
-	const char **tab;
-	size_t i;
-	size_t j;
-	int nb_args;
-	va_list	args;
-	int ret;
-
-	j = -1;
-	i = 0;
-	nb_args = 0;
-	ret = 0;
-	va_start(args, format);
-	while (format[++j])
-	{
-		if (format[j] == '%' && (ft_isdigit(format[j + 1]) || format[j + 1] == '*'))
-		{
-			nb_args++;
-			if (nb_args == 1)
-				i = j;
-		}
-		if (nb_args == 0)
-		{
-			if (format[j] == '%' && format[j + 1] == '%')
-				while (format[j + 1] == '%')
-				{
-					ft_putchar(format[j + 1]);
-					j++;
-				}
-			else
-				ft_putchar(format[j]);
-			ret++;
-		}
-	}
-	tab = ft_fill_str(nb_args, &format[i], args);
-	i = 0;
-	while (i < nb_args)
-	{
-		ft_putstr(tab[i]);
-		ret += ft_strlen(tab[i]);
-		i++;
-	}
-	j = -1;
-	printf("nb_args %zu\n", nb_args);
-	while (format[++j] && nb_args)
-		if (format[j] == '%' && format[j + 1] == '%')
-			while (format[j] == '%')
-				j++;
-		else if (format[j] == '%')
-			nb_args--;
-	printf("j === %zu\n", j);
-		while (format[j] == '.' || format[j] == '*' || format[j] == '0'
-		|| format[j] == '-' || format[j] == 'd' || format[j] == 'i' ||
-		format[j] == 'c' || format[j] == 's' || format[j] == 'u' ||
-		format[j] == 'x'|| format[j] == 'X' || format[j] == 'p' ||
-		ft_isdigit(format[j]))
-			j++;
-	ft_putstr(&format[j]);
-	ret += ft_strlen(&format[j]);
-	va_end(args);
-	return (ret);
-}
-
-/*#include "ft_printf.h"
-int	ft_printf(const char *format, ...)
-{
-	int i;
-	int j;
-	const char **stock;
-	const char *output;
-	int	*fct_ptr;
-	i = -1;
-	j = -1;
-	while (format[++i])
-	{
-		if (check_format(format))
-			if (find_conv_o_flag(format[i]))
-			{
-				fct_ptr = find_conv_o_flag(format[i]);
-				stock[j] = find_param(format, str);
-				stock[j] = app_fct(stock[j], &fct_ptr);
-				j++;
-			}
-		else
-			return 0;
-	}
-	stock[j] = 0;
-	while (stock[j])
-		output = (j == 0) ? ft_strjoin(stock[j], "") : ft_strjoin(output, stock[j]);
-	return (ft_strlen(output));
-	printf("%d\n", check_format(format));
-	printf("%s\n", params);
-	ft_transform_printf(format, ...);
-	printf("%s\n", find_param(format, params));
-}*/
-➜  printf cat ft_printf_utils.c
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_printf_utils.c                                  :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: clde-ber <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/02/02 14:46:53 by clde-ber          #+#    #+#             */
-/*   Updated: 2020/02/04 14:06:37 by clde-ber         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "ft_printf.h"
-
 /*int		ft_format(const char *format)
 {
 	const char *c;
@@ -328,14 +217,13 @@ char	ft_type(const char *str)
 	return (str[i]);
 }
 
-size_t	ft_index(const char *str, const char *format)
+size_t	ft_index(const char *str)
 {
 	size_t i;
 
 	i = 0;
 	while (str[i + 1])
 	{
-		printf("str[i] %c\n", str[i]);
 		if (str[i] == 'd' || str[i] == 'i' || str[i] == 'c' || str[i] == 's'
 		|| str[i] == 'u' || str[i] == 'x'|| str[i] == 'X' || str[i] == 'p')
 			break ;
@@ -346,7 +234,7 @@ size_t	ft_index(const char *str, const char *format)
 				i++;
 			break ;
 		}
-		if (str[i] == '*' && ft_isdigit(str[i + 1]) || (str[i] == '%'
+		if ((str[i] == '*' && ft_isdigit(str[i + 1])) || (str[i] == '%'
 		&& ft_isdigit(str[i + 1])))
 		{
 			while(ft_isdigit(str[i + 1]))
@@ -388,9 +276,8 @@ char	*to_hex(char c, unsigned int n, char *base)
 		k = k / ft_strlen(base);
 		i++;
 	}
-	if (!(str = malloc(sizeof(char) * 1024)))
+	if (!(str = malloc(sizeof(char) * (i + 1))))
 		return (0);
-	printf("i === %d\n", i);
 	i = 0;
 	while (n > 0)
 	{
@@ -435,11 +322,10 @@ char	*revstr(char *str)
 		j++;
 	}
 	newstr[j] = '\0';
-	printf("newstr %s\n", newstr);
 	return (newstr);
 }
 
-const char	*extract_arg(size_t i, va_list args, char *format)
+const char	*extract_arg(size_t i, va_list args, const char *format)
 {
 	if (ft_type(&format[i]) == 's')
 		return (va_arg(args, char *));
@@ -464,17 +350,16 @@ const char	*extract_arg(size_t i, va_list args, char *format)
 		return (ft_strjoin("0", ""));
 	if (ft_type(&format[i]) == '-')
 		return (ft_strjoin("-", ""));
-	i += ft_index(&format[i], format);
-	printf("i = %zu\n", i);
+	i += ft_index(&format[i]);
+	return (0);
 }
 
 const char *ft_spacing(size_t i, const char *format, va_list args)
 {
-	char *width;
-	char *ret;
+	const char *width;
+	const char *ret;
 
 	width = "0";
-	printf("FT_TYPE(&FORMAT[I + 1] %c\n", format[i + 1]);
 	if (ft_isdigit(format[i + 1]))
 	{
 		ret = ft_strjoin("*", char_to_s(format[i + 1]));
@@ -484,7 +369,6 @@ const char *ft_spacing(size_t i, const char *format, va_list args)
 			ret = ft_strjoin(ret, char_to_s(format[i + 1]));
 			i++;
 		}
-		printf("ret 1 %s\n", ret);
 		return (ret);
 	}
 	else
@@ -498,11 +382,10 @@ const char *ft_spacing(size_t i, const char *format, va_list args)
 
 const char *ft_precision(size_t i, const char *format, va_list args)
 {
-	char *nb_char;
-	char *ret;
+	const char *nb_char;
+	const char *ret;
 
 	nb_char = "0";
-	printf("FT_TYPE(&FORMAT[I + 1] %c\n", format[i + 1]);
 	if (ft_isdigit(format[i + 1]))
 	{
 		ret = ft_strjoin(".", char_to_s(format[i + 1]));
@@ -512,7 +395,6 @@ const char *ft_precision(size_t i, const char *format, va_list args)
 			ret = ft_strjoin(ret, char_to_s(format[i + 1]));
 			i++;
 		}
-		printf("ret 2 %s\n", ret);
 		return (ret);
 	}
 	else
@@ -524,9 +406,9 @@ const char *ft_precision(size_t i, const char *format, va_list args)
 	return (0);
 }
 
-char *ft_fill_str(size_t nb_args, const char *format, va_list args)
+const char **ft_fill_str(size_t nb_args, const char *format, va_list args)
 {
-	size_t i;
+	int i;
 	size_t j;
 	char **params;
 	char **new_params;
@@ -537,20 +419,20 @@ char *ft_fill_str(size_t nb_args, const char *format, va_list args)
 		return (0);
 	while (i + 2 < ft_strlen(format))
 	{
-		params[j] = ft_strjoin(extract_arg(i, args, format), "");
-		i += ft_index(&format[i], format);
+		params[j] = (char *)ft_strjoin(extract_arg(i, args, format), "");
+		i += ft_index(&format[i]);
 		j++;
 	}
 	params[j] = 0;
 	new_params = ft_modify_strings(nb_args, 0, j, params);
-	return (new_params);
+	return ((const char **)new_params);
 }
 
-const char **ft_modify_strings(size_t nb_args, size_t i, size_t j, char **params)
+char **ft_modify_strings(size_t nb_args, size_t i, size_t j, char **params)
 {
 	size_t nb;
 	size_t index;
-	size_t value;
+	int value;
 	char **upd_params;
 
 	nb = 0;
@@ -567,39 +449,38 @@ const char **ft_modify_strings(size_t nb_args, size_t i, size_t j, char **params
 				upd_params[nb][0] = '\0';
 			else if (value - 1 < ft_strlen(params[index]))
 			{
-				upd_params[nb] = ft_strjoin(params[index], "");
+				upd_params[nb] = (char *)ft_strjoin(params[index], "");
 				upd_params[nb][value] = '\0';
 			}
 			else if (value - 1 > ft_strlen(params[index]))
 			{
-				upd_params[nb] = ft_strjoin(replace_spaces(
-				ft_spaces(value, params[index])), params[index]);
+				upd_params[nb] = (char *)ft_strjoin(replace_spaces(
+				(char *)ft_spaces(value, params[index])), params[index]);
 			}
 			nb++;
 		}
 		if (i > 0 && (params[i][0] == '*' || params[i][0] == '%')
 		&& params[i - 1][0] != '.' && nb < nb_args + 1)
 		{
-			printf("a\n");
 			if (nb < nb_args + 1)
 			{
 			value = ft_atoi(&params[i][1]);
 			upd_params[nb] = (value > ft_strlen(params[index])) ?
-			ft_strjoin(ft_spaces(value, params[index]), params[index])
-			: ft_strjoin(params[index], "");
+			(char *)ft_strjoin(ft_spaces(value, params[index]), params[index])
+			: (char *)ft_strjoin(params[index], "");
 			nb++;
 			}
 		}
 		if (params[i][0] == '0' && nb < nb_args + 1)
 		{
 			index = ft_find_arg(j, ++index, params);
-			upd_params[nb] = replace_spaces(params[index]);
+			upd_params[nb] = (char *)replace_spaces(params[index]);
 			nb++;
 		}
 		if (params[i][0] == '-' && nb < nb_args + 1)
 		{
 			index = ft_find_arg(j, ++index, params);
-			upd_params[nb] = ft_strjoin(params[index], ft_spaces(value,
+			upd_params[nb] = (char *)ft_strjoin(params[index], ft_spaces(value,
 			params[index]));
 			nb++;
 		}
@@ -662,97 +543,6 @@ int		ft_is_value(char c)
 	if (c == '%' || c == '*')
 		return (1);
 	return (0);
-}
-
-void	*ft_calloc(size_t count, size_t size)
-{
-	size_t	i;
-	void	*ptr;
-
-	i = 0;
-	if (!(ptr = (void *)malloc(count * size)))
-		return (0);
-	while (i < count * size)
-	{
-		((char *)ptr)[i] = 0;
-		i++;
-	}
-	return (ptr);
-}
-
-static size_t	len_wd(char const *str, int c)
-{
-	size_t i;
-
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == c)
-			break ;
-		i++;
-	}
-	return (i);
-}
-
-static size_t	count_malloc(char const *s, char c)
-{
-	size_t i;
-	size_t count;
-
-	i = 0;
-	count = 0;
-	if (s[i] == '\0' || c == '\0')
-		return (1);
-	while (s[i])
-	{
-		if (s[i] != c && (s[i + 1] == c || s[i + 1] == '\0'))
-			count++;
-		i++;
-	}
-	return (count);
-}
-
-static void		*ft_free(char **res, int j)
-{
-	int	i;
-
-	i = 0;
-	while (i < j)
-	{
-		free(res[i]);
-		i++;
-	}
-	free(res);
-	return (NULL);
-}
-
-char			**ft_split(char const *s, char c)
-{
-	size_t	i;
-	size_t	j;
-	char	**res;
-
-	i = 0;
-	j = 0;
-	if (!s || !*s)
-		return ((char **)ft_calloc(2, sizeof(char *)));
-	if (!(res = malloc(sizeof(char *) * (count_malloc(s, c) + 1))))
-		return (0);
-	while (i < ft_strlen(s))
-	{
-		while (j < count_malloc(s, c) && s[i] && s[i] != c)
-		{
-			if (!(res[j] = malloc(sizeof(char) * (len_wd(&s[i], c) + 1))))
-				return (ft_free(res, j));
-			res[j] = ft_memmove(res[j], &s[i], len_wd(&s[i], c) + 1);
-			res[j][len_wd(&s[i], c)] = '\0';
-			j++;
-			i += len_wd(&s[i], c);
-		}
-		i++;
-	}
-	res[count_malloc(s, c)] = 0;
-	return (res);
 }
 
 void ft_putchar(char c)
