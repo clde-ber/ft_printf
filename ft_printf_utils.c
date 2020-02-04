@@ -222,21 +222,21 @@ size_t	ft_index(const char *str, const char *format)
 	size_t i;
 
 	i = 0;
-	while (i < ft_strlen(str))
+	while (str[i + 1])
 	{
-	//	printf("str[i] %c\n", str[i]);
+		printf("str[i] %c\n", str[i]);
 		if (str[i] == 'd' || str[i] == 'i' || str[i] == 'c' || str[i] == 's'
 		|| str[i] == 'u' || str[i] == 'x'|| str[i] == 'X' || str[i] == 'p')
 			break ;
-		if (i + 1 < ft_strlen(str) && str[i] == '.' &&
-		(str[i + 1] == '*' || ft_isdigit(str[i + 1])))
+		if (str[i] == '.' && (str[i + 1] == '*' || ft_isdigit(str[i + 1])))
 		{
+			i++;
 			while(ft_isdigit(str[i + 1]))
 				i++;
 			break ;
 		}
-		if (i + 1 < ft_strlen(str) && str[i] == '*' && ft_isdigit(str[i + 1])
-		|| (str[i] == '%' && ft_isdigit(str[i + 1])))
+		if (str[i] == '*' && ft_isdigit(str[i + 1]) || (str[i] == '%'
+		&& ft_isdigit(str[i + 1])))
 		{
 			while(ft_isdigit(str[i + 1]))
 				i++;
@@ -318,7 +318,7 @@ char	*revstr(char *str)
 	i = ft_strlen(str) + 1;
 	if (!(newstr = malloc(sizeof(char) * i)))
 		return (0);
-	while (i >= 0)
+	while (i - 1 > 0)
 	{
 		newstr[j] = str[--i - 1];
 		j++;
@@ -424,17 +424,14 @@ char *ft_fill_str(size_t nb_args, const char *format, va_list args)
 	j = 0;
 	if (!(params = malloc(sizeof(char *) * 1024)))
 		return (0);
-	while (i + 1 < ft_strlen(format))
+	while (i + 2 < ft_strlen(format))
 	{
-		printf("format[i] fill_str %c\n", format[i]);
 		params[j] = ft_strjoin(extract_arg(i, args, format), "");
 		i += ft_index(&format[i], format);
-		printf("j = %zu\n", j);
 		j++;
 	}
 	params[j] = 0;
 	new_params = ft_modify_strings(nb_args, 0, j, params);
-	ft_free(j, params);
 	return (new_params);
 }
 
@@ -469,8 +466,10 @@ const char **ft_modify_strings(size_t nb_args, size_t i, size_t j, char **params
 			}
 			nb++;
 		}
-		if (i > 0 && params[i][0] == '*' && params[i - 1][0] != '.' && nb < nb_args + 1)
+		if (i > 0 && (params[i][0] == '*' || params[i][0] == '%')
+		&& params[i - 1][0] != '.' && nb < nb_args + 1)
 		{
+			printf("a\n");
 			if (nb < nb_args + 1)
 			{
 			value = ft_atoi(&params[i][1]);
@@ -495,7 +494,10 @@ const char **ft_modify_strings(size_t nb_args, size_t i, size_t j, char **params
 		}
 		i++;
 			}
+		if (nb > 1)
 		upd_params[nb - 1] = 0;
+		else
+			upd_params[nb] = 0;
 		return (upd_params);
 }
 
@@ -551,6 +553,97 @@ int		ft_is_value(char c)
 	return (0);
 }
 
+void	*ft_calloc(size_t count, size_t size)
+{
+	size_t	i;
+	void	*ptr;
+
+	i = 0;
+	if (!(ptr = (void *)malloc(count * size)))
+		return (0);
+	while (i < count * size)
+	{
+		((char *)ptr)[i] = 0;
+		i++;
+	}
+	return (ptr);
+}
+
+static size_t	len_wd(char const *str, int c)
+{
+	size_t i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == c)
+			break ;
+		i++;
+	}
+	return (i);
+}
+
+static size_t	count_malloc(char const *s, char c)
+{
+	size_t i;
+	size_t count;
+
+	i = 0;
+	count = 0;
+	if (s[i] == '\0' || c == '\0')
+		return (1);
+	while (s[i])
+	{
+		if (s[i] != c && (s[i + 1] == c || s[i + 1] == '\0'))
+			count++;
+		i++;
+	}
+	return (count);
+}
+
+static void		*ft_free(char **res, int j)
+{
+	int	i;
+
+	i = 0;
+	while (i < j)
+	{
+		free(res[i]);
+		i++;
+	}
+	free(res);
+	return (NULL);
+}
+
+char			**ft_split(char const *s, char c)
+{
+	size_t	i;
+	size_t	j;
+	char	**res;
+
+	i = 0;
+	j = 0;
+	if (!s || !*s)
+		return ((char **)ft_calloc(2, sizeof(char *)));
+	if (!(res = malloc(sizeof(char *) * (count_malloc(s, c) + 1))))
+		return (0);
+	while (i < ft_strlen(s))
+	{
+		while (j < count_malloc(s, c) && s[i] && s[i] != c)
+		{
+			if (!(res[j] = malloc(sizeof(char) * (len_wd(&s[i], c) + 1))))
+				return (ft_free(res, j));
+			res[j] = ft_memmove(res[j], &s[i], len_wd(&s[i], c) + 1);
+			res[j][len_wd(&s[i], c)] = '\0';
+			j++;
+			i += len_wd(&s[i], c);
+		}
+		i++;
+	}
+	res[count_malloc(s, c)] = 0;
+	return (res);
+}
+
 void ft_putchar(char c)
 {
 	write(1, &c, sizeof(char));
@@ -569,19 +662,4 @@ void ft_putstr(char *str)
 			i++;
 		}
 	}
-}
-
-
-void *ft_free(size_t j, char **params)
-{
-	size_t i;
-
-	i = 0;
-	while (i < j)
-	{
-		free(params[i]);
-		i++;
-	}
-	free(params[i]);
-	free(params);
 }
