@@ -209,7 +209,8 @@ char	ft_type(const char *str)
 	{
 		if (str[i] == 'd' || str[i] == 'i' || str[i] == 'c' || str[i] == 's'
 		|| str[i] == 'u' || str[i] == 'x'|| str[i] == 'X' || str[i] == 'p'
-		|| str[i] == '0' || str[i] == '.' || str[i] == '-' || str[i] == '*')
+		|| str[i] == '0' || str[i] == '.' || str[i] == '-' || str[i] == '*'
+		|| str[i] == '%')
 			break ;
 		i++;
 	}
@@ -223,16 +224,24 @@ size_t	ft_index(const char *str, const char *format)
 	i = 0;
 	while (str[i])
 	{
+		printf("str[i] %c\n", str[i]);
 		if (str[i] == 'd' || str[i] == 'i' || str[i] == 'c' || str[i] == 's'
 		|| str[i] == 'u' || str[i] == 'x'|| str[i] == 'X' || str[i] == 'p')
 			break ;
 		if (str[i] == '.' && (str[i + 1] == '*' || ft_isdigit(str[i + 1])))
 		{
 			i++;
+			while(ft_isdigit(str[i + 1]))
+				i++;
 			break ;
 		}
-		if (str[i] == '*' && ft_isdigit(str[i + 1]))
+		if (str[i] == '*' && ft_isdigit(str[i + 1]) || (str[i] == '%'
+		&& ft_isdigit(str[i + 1])))
+		{
+			while(ft_isdigit(str[i + 1]))
+				i++;
 			break ;
+		}
 		if (str[i] == '*')
 			break ;
 		if (str[i] == '0' || str[i] == '-')
@@ -338,7 +347,7 @@ const char	*extract_arg(size_t i, va_list args, char *format)
 		va_arg(args, unsigned int), "0123456789abcdef")));
 	if (ft_type(&format[i]) == '.')
 		return ((const char *)ft_precision(i, format, args));
-	if (ft_type(&format[i]) == '*')
+	if (ft_type(&format[i]) == '*' || ft_type(&format[i]) == '%')
 		return ((const char *)ft_spacing(i, format, args));
 	if (ft_type(&format[i]) == '0')
 		return (ft_strjoin("0", ""));
@@ -351,10 +360,22 @@ const char	*extract_arg(size_t i, va_list args, char *format)
 const char *ft_spacing(size_t i, const char *format, va_list args)
 {
 	char *width;
+	char *ret;
 
 	width = "0";
-	if (ft_isdigit(ft_type(&format[i + 1])))
-		return (ft_strjoin("*", char_to_s(ft_type(&format[i]))));
+	printf("FT_TYPE(&FORMAT[I + 1] %c\n", format[i + 1]);
+	if (ft_isdigit(format[i + 1]))
+	{
+		ret = ft_strjoin("*", char_to_s(format[i + 1]));
+		i++;
+		while (ft_isdigit(format[i + 1]))
+		{
+			ret = ft_strjoin(ret, char_to_s(format[i + 1]));
+			i++;
+		}
+		printf("ret 1 %s\n", ret);
+		return (ret);
+	}
 	else
 	{
 		if(!(width = ft_itoa(va_arg(args, int))))
@@ -367,10 +388,22 @@ const char *ft_spacing(size_t i, const char *format, va_list args)
 const char *ft_precision(size_t i, const char *format, va_list args)
 {
 	char *nb_char;
+	char *ret;
 
 	nb_char = "0";
-	if (ft_isdigit(ft_type(&format[i + 1])))
-		return (ft_strjoin(".", char_to_s(ft_type(&format[i]))));
+	printf("FT_TYPE(&FORMAT[I + 1] %c\n", format[i + 1]);
+	if (ft_isdigit(format[i + 1]))
+	{
+		ret = ft_strjoin(".", char_to_s(format[i + 1]));
+		i++;
+		while (ft_isdigit(format[i + 1]))
+		{
+			ret = ft_strjoin(ret, char_to_s(format[i + 1]));
+			i++;
+		}
+		printf("ret 2 %s\n", ret);
+		return (ret);
+	}
 	else
 	{
 		if(!(nb_char = ft_itoa(va_arg(args, int))))
