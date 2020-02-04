@@ -7,27 +7,33 @@ int	ft_printf(const char *format, ...)
 	size_t j;
 	int nb_args;
 	va_list	args;
+	int ret;
 
 	j = -1;
 	i = 0;
 	nb_args = 0;
+	ret = 0;
 	va_start(args, format);
 	while (format[++j])
 	{
-		if (format[j] == '%')
+		if (format[j] == '%' && (ft_isdigit(format[j + 1]) || format[j + 1] == '*'))
 		{
 			nb_args++;
 			if (nb_args == 1)
 				i = j;
 		}
-		if (nb_args == 0)
-		ft_putchar(format[j]);
+		if (nb_args == 0 && format[j + 1] != '%')
+		{
+			ft_putchar(format[j]);
+			ret++;
+		}
 	}
 	tab = ft_fill_str(nb_args, &format[i], args);
 	i = 0;
 	while (i < nb_args)
 	{
 		ft_putstr(tab[i]);
+		ret += ft_strlen(tab[i]);
 		i++;
 	}
 	j = -1;
@@ -40,8 +46,9 @@ int	ft_printf(const char *format, ...)
 		format[j] == 'x'|| format[j] == 'X' || format[j] == 'p')
 			j++;
 	ft_putstr(&format[j]);
+	ret += ft_strlen(&format[j]);
 	va_end(args);
-	return (0);
+	return (ret);
 }
 
 /*#include "ft_printf.h"
