@@ -24,9 +24,13 @@ int	ft_printf(const char *format, ...)
 		}
 		if (nb_args == 0)
 		{
-			if (format[j + 1] != '%' && format[j] == '%')
-				ft_putchar(format[j]);
-			else if (format[j] != '%')
+			if (format[j] == '%' && format[j + 1] == '%')
+				while (format[j + 1] == '%')
+				{
+					ft_putchar(format[j + 1]);
+					j++;
+				}
+			else
 				ft_putchar(format[j]);
 			ret++;
 		}
@@ -40,9 +44,14 @@ int	ft_printf(const char *format, ...)
 		i++;
 	}
 	j = -1;
+	printf("nb_args %zu\n", nb_args);
 	while (format[++j] && nb_args)
-		if (format[j] == '%')
+		if (format[j] == '%' && format[j + 1] == '%')
+			while (format[j] == '%')
+				j++;
+		else if (format[j] == '%')
 			nb_args--;
+	printf("j === %zu\n", j);
 		while (format[j] == '.' || format[j] == '*' || format[j] == '0'
 		|| format[j] == '-' || format[j] == 'd' || format[j] == 'i' ||
 		format[j] == 'c' || format[j] == 's' || format[j] == 'u' ||
