@@ -22,13 +22,15 @@ int	ft_printf(const char *format, ...)
 			if (nb_args == 1)
 				i = j;
 		}
-		if (nb_args == 0 && format[j + 1] != '%')
+		if (nb_args == 0)
 		{
-			ft_putchar(format[j]);
+			if (format[j + 1] != '%' && format[j] == '%')
+				ft_putchar(format[j]);
+			else if (format[j] != '%')
+				ft_putchar(format[j]);
 			ret++;
 		}
 	}
-	printf("nb_args %d\n", nb_args);
 	tab = ft_fill_str(nb_args, &format[i], args);
 	i = 0;
 	while (i < nb_args)
@@ -44,7 +46,8 @@ int	ft_printf(const char *format, ...)
 		while (format[j] == '.' || format[j] == '*' || format[j] == '0'
 		|| format[j] == '-' || format[j] == 'd' || format[j] == 'i' ||
 		format[j] == 'c' || format[j] == 's' || format[j] == 'u' ||
-		format[j] == 'x'|| format[j] == 'X' || format[j] == 'p')
+		format[j] == 'x'|| format[j] == 'X' || format[j] == 'p' ||
+		ft_isdigit(format[j]))
 			j++;
 	ft_putstr(&format[j]);
 	ret += ft_strlen(&format[j]);
