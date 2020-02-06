@@ -200,32 +200,37 @@ size_t	ft_nb_params(const char *format)
 	return (nb_params);
 }
 
-char	ft_type(const char *str)
+char	ft_type(const char *str, const char *format)
 {
 	int i;
+	int boolean;
 
 	i = 0;
-	while (str[i])
+	boolean = 0;
+	while (format[i])
 	{
-		if (str[i] == 'd' || str[i] == 'i' || str[i] == 'c' || str[i] == 's'
-		|| str[i] == 'u' || str[i] == 'x'|| str[i] == 'X' || str[i] == 'p'
-		|| str[i] == '0' || str[i] == '.' || str[i] == '-' || str[i] == '*'
-		|| str[i] == '%')
+		if (format[i] == '%')
+			boolean = 1;
+		if (((format[i] == 'd' || format[i] == 'i' || format[i] == 'c' ||
+		format[i] == 's' || format[i] == 'u' || format[i] == 'x'|| format[i] == 'X'
+		|| format[i] == 'p') && boolean == 1) || format[i] == '0' || format[i] == '.'
+		|| format[i] == '-' || format[i] == '*' || (format[i] == '%' &&
+		format[i + 1] != '.'))
 			break ;
 		i++;
 	}
 	return (str[i]);
 }
 
-size_t	ft_index(const char *str)
+size_t	ft_index(const char *str, const char *format)
 {
 	size_t i;
 
 	i = 0;
 	while (str[i + 1])
 	{
-		if (str[i] == 'd' || str[i] == 'i' || str[i] == 'c' || str[i] == 's'
-		|| str[i] == 'u' || str[i] == 'x'|| str[i] == 'X' || str[i] == 'p')
+		if ((str[i] == 'd' || str[i] == 'i' || str[i] == 'c' || str[i] == 's'
+		|| str[i] == 'u' || str[i] == 'x'|| str[i] == 'X' || str[i] == 'p'))
 			break ;
 		if (str[i] == '.' && (str[i + 1] == '*' || ft_isdigit(str[i + 1])))
 		{
@@ -325,32 +330,58 @@ char	*revstr(char *str)
 	return (newstr);
 }
 
+int check_conv(size_t i, const char *format)
+{
+//	printf("format[i] %c\n", format[i]);
+	if (format[i] == '%' && (format[i + 1] == 'c' || format[i + 1] == 's' ||
+	format[i + 1] == 'd' || format[i + 1] == 'i' || format[i + 1] == 'u' ||
+	format[i + 1] == 'x' || format[i + 1] == 'X' || format[i + 1] == 'p'))
+		return (-1);
+	while (i >= 0)
+	{
+	//	printf("format[i]    %c\n", format[i]);
+		if (format[i] == '%')
+		{
+			write (1, "aaaaaaa\n", 2);
+			return (1);
+		}
+		if (i != 0)
+			i--;
+		if (format[i] == '%')
+			return (1) ;
+		if (i == 0)
+			break ;
+	}
+	return (0);
+}
+
 const char	*extract_arg(size_t i, va_list args, const char *format)
 {
-	if (ft_type(&format[i]) == 's')
+	if (ft_type(&format[i], format) == 's')
 		return (va_arg(args, char *));
-	if (ft_type(&format[i]) == 'd' || ft_type(&format[i]) == 'i' ||
-	ft_type(&format[i]) == 'c')
-		return (ft_type(&format[i]) != 'c') ?
+	if ((ft_type(&format[i], format) == 'd' || ft_type(&format[i], format) == 'i' ||
+	ft_type(&format[i], format) == 'c'))
+		return (ft_type(&format[i], format) != 'c') ?
 		ft_itoa(va_arg(args, int))
 		: char_to_s((unsigned char)va_arg(args, int));
-	if (ft_type(&format[i]) == 'u')
+	if (ft_type(&format[i], format) == 'u')
 		return (ft_itoa(va_arg(args, unsigned int)));
-	if (ft_type(&format[i]) == 'x' || ft_type(&format[i]) == 'X')
-		return (to_hex(ft_type(&format[i]), va_arg(args, unsigned int),
+	if ((ft_type(&format[i], format) == 'x' || ft_type(&format[i], format) == 'X'))
+		return (to_hex(ft_type(&format[i], format), va_arg(args, unsigned int),
 		"0123456789abcdef"));
-	if (ft_type(&format[i]) == 'p')
-		return (ft_strjoin("0x", to_hex(ft_type(&format[i]),
+	if (ft_type(&format[i], format) == 'p')
+		return (ft_strjoin("0x", to_hex(ft_type(&format[i], format),
 		va_arg(args, unsigned int), "0123456789abcdef")));
-	if (ft_type(&format[i]) == '.')
+	if (ft_type(&format[i], format) == '.')
 		return ((const char *)ft_precision(i, format, args));
-	if (ft_type(&format[i]) == '*' || ft_type(&format[i]) == '%')
+	if (ft_type(&format[i], format) == '*' || ft_type(&format[i], format) == '%')
 		return ((const char *)ft_spacing(i, format, args));
-	if (ft_type(&format[i]) == '0')
+	if (ft_type(&format[i], format) == '0')
 		return (ft_strjoin("0", ""));
-	if (ft_type(&format[i]) == '-')
+	if (ft_type(&format[i], format) == '-')
 		return (ft_strjoin("-", ""));
-	i += ft_index(&format[i]);
+	printf("i = %zu\n", i);
+	i += ft_index(&format[i], format);
 	return (0);
 }
 
@@ -389,6 +420,7 @@ const char *ft_precision(size_t i, const char *format, va_list args)
 	const char *ret;
 
 	nb_char = "0";
+	if (format[i] == '%')
 	while (format[i + 1] == '.' || format[i + 1] == '*' || format[i + 1] == '-'
 	|| format[i + 1] == '0')
 		i++;
@@ -429,7 +461,7 @@ const char **ft_fill_str(size_t nb_args, const char *format, va_list args)
 	{
 		fct = extract_arg(i, args, format);
 		params[j] = (char *)ft_strjoin(fct, "");
-		i += ft_index(&format[i]);
+		i += ft_index(&format[i], format);
 		printf("i = %d\n", i);
 		printf("params[j] %s\n", params[j]);
 		j++;
