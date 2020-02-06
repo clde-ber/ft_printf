@@ -213,9 +213,11 @@ char	ft_type(const char *str, const char *format)
 			boolean = 1;
 		if (((format[i] == 'd' || format[i] == 'i' || format[i] == 'c' ||
 		format[i] == 's' || format[i] == 'u' || format[i] == 'x'|| format[i] == 'X'
-		|| format[i] == 'p') && boolean == 1) || format[i] == '0' || format[i] == '.'
-		|| format[i] == '-' || format[i] == '*' || (format[i] == '%' &&
-		format[i + 1] != '.'))
+		|| format[i] == 'p') && boolean == 1) || format[i] == '0' || (format[i] == '.'
+	   && format[i + 1] != 'd' && format[i + 1] != 'i' && format[i + 1] != 'c' &&
+		format[i + 1] != 's' && format[i + 1] != 'u' && format[i + 1] != 'x'&&
+		format[i + 1] != 'X' && format[i + 1] == 'p') || format[i] == '-' ||
+		format[i] == '*' || (format[i] == '%' && format[i + 1] != '.'))
 			break ;
 		i++;
 	}
@@ -365,7 +367,7 @@ const char	*extract_arg(size_t i, va_list args, const char *format)
 		ft_itoa(va_arg(args, int))
 		: char_to_s((unsigned char)va_arg(args, int));
 	if (ft_type(&format[i], format) == 'u')
-		return (ft_itoa(va_arg(args, unsigned int)));
+		return (ft_itoa((unsigned int)va_arg(args, int)));
 	if ((ft_type(&format[i], format) == 'x' || ft_type(&format[i], format) == 'X'))
 		return (to_hex(ft_type(&format[i], format), va_arg(args, unsigned int),
 		"0123456789abcdef"));
@@ -457,6 +459,7 @@ const char **ft_fill_str(size_t nb_args, const char *format, va_list args)
 	fct = 1;
 	if (!(params = malloc(sizeof(char *) * 1024)))
 		return (0);
+	printf("nb_args %zu\n", nb_args);
 	while (fct)
 	{
 		fct = extract_arg(i, args, format);
