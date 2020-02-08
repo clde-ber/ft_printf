@@ -16,7 +16,8 @@ int	ft_printf(const char *format, ...)
 	va_start(args, format);
 	while (format[++j])
 	{
-		if (format[j] == '%' && (ft_isdigit(format[j + 1]) || format[j + 1] == '*'))
+		if (format[j] == '%' && (ft_isdigit(format[j + 1]) || format[j + 1] == '*'
+		|| format[j + 1] == '.'))
 		{
 			nb_args++;
 			if (nb_args == 1)
@@ -30,6 +31,8 @@ int	ft_printf(const char *format, ...)
 					ft_putchar(format[j + 1]);
 					j++;
 				}
+			else if (format[j] == '%')
+				nb_args++;
 			else
 				ft_putchar(format[j]);
 			ret++;
@@ -39,7 +42,8 @@ int	ft_printf(const char *format, ...)
 	i = 0;
 	while (i < nb_args)
 	{
-		ft_putstr((char *)tab[i]);
+		if (i < nb_args)
+			ft_putstr((char *)tab[i]);
 		ret += ft_strlen(tab[i]);
 		i++;
 	}
