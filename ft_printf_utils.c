@@ -533,12 +533,14 @@ char **ft_modify_strings(size_t nb_args, size_t i, size_t j, char **params)
 	size_t index;
 	int value;
 	char **upd_params;
+	int boolean;
 
+	boolean = 0;
 	nb = 0;
 	index = -1;
 	if (!(upd_params = malloc(sizeof(char *) * (nb_args + 1))))
 		return (0);
-		while (i + 1 < j && nb < nb_args)
+		while (i < j && nb < nb_args)
 		{
 		if (params[i][0] == '.' && nb < nb_args)
 		{
@@ -582,12 +584,25 @@ char **ft_modify_strings(size_t nb_args, size_t i, size_t j, char **params)
 			params[index]));
 			nb++;
 		}
-		i++;
-			}
-		if (nb > 1)
-		upd_params[nb - 1] = 0;
 		else
+		{	upd_params[nb] = params[nb];
+			nb++;
+			boolean = 1;
+		}
+		i++;
+		}
+		if (boolean)
 			upd_params[nb] = 0;
+		if (nb > 1 && boolean == 0)
+		upd_params[nb - 1] = 0;
+		else if (nb <= 1 && boolean == 0)
+			upd_params[nb] = 0;
+		i = 0;
+		while (upd_params[i])
+		{
+				printf("upd_params[i] %s\n", upd_params[i]);
+				i++;
+		}
 		return (upd_params);
 }
 
