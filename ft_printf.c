@@ -39,11 +39,21 @@ int	ft_printf(const char *format, ...)
 		}
 	}
 	tab = ft_fill_str(nb_args, &format[i], args);
+	j = i;
+	printf("j ========= %zu\n", j);
 	i = 0;
+	printf("index = %zu\n", j);
 	while (i < nb_args)
 	{
 		if (i < nb_args)
 			ft_putstr((char *)tab[i]);
+		while (format[j] && format[j] != 'd' && format[j] != 'i' &&
+		format[j] != 'c' && format[j] != 's' && format[j] != 'u' &&
+		format[j] != 'x' && format[j] != 'X' && format[j] != 'p')
+			j++;
+		printf("j === %zu\n", j);
+		while (format[j + 1] && format[j + 1] != '%')
+			ft_putchar(format[++j]);
 		ret += ft_strlen(tab[i]);
 		i++;
 	}
