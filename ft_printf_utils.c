@@ -1,4 +1,3 @@
-
 #include "ft_printf.h"
 
 /*int		ft_format(const char *format)
@@ -232,8 +231,9 @@ size_t	ft_index(const char *str, const char *format)
 	i = 0;
 	while (str[i + 1])
 	{
-		if ((str[i] == 'd' || str[i] == 'i' || str[i] == 'c' || str[i] == 's'
-		|| str[i] == 'u' || str[i] == 'x'|| str[i] == 'X' || str[i] == 'p'))
+		if (str[i] == 'd' || str[i] == 'i' || str[i] == 'c'
+		|| str[i] == 's' || str[i] == 'u' || str[i] == 'x'|| str[i] == 'X'
+		|| str[i] == 'p')
 			break ;
 		if (str[i] == '.' && (str[i + 1] == '*' || ft_isdigit(str[i + 1])))
 		{
@@ -486,7 +486,7 @@ char **ft_modify_strings(size_t nb_args, size_t i, size_t j, char **params)
 	index = -1;
 	if (!(upd_params = malloc(sizeof(char *) * (nb_args + 1))))
 		return (0);
-		while (i < j && nb < nb_args)
+		while (i + 1 < j && nb < nb_args)
 		{
 		if (params[i][0] == '.' && nb < nb_args)
 		{
