@@ -38,7 +38,7 @@ int	ft_printf(const char *format, ...)
 			ret++;
 		}
 	}
-	tab = ft_fill_str(nb_args, &format[i], args);
+	tab = ft_fill_str(nb_args, &format[i], args, format);
 	j = i;
 	printf("j ========= %zu\n", j);
 	i = 0;
