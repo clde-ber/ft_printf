@@ -268,7 +268,7 @@ char	ft_type(const char *str, const char *format)
 			return (str[i]);
 		i++;
 	}
-	return (str[i]);
+	return (0);
 }
 
 int check_conv(size_t i, const char *format)
@@ -297,7 +297,7 @@ size_t	ft_index(size_t j, const char *str, const char *format)
 	size_t i;
 
 	i = 0;
-	while (str[i + 1])
+	while (str[i])
 	{
 		printf("j + i = %zu\n", j + i);
 		if ((str[i] == 'd' || str[i] == 'i' || str[i] == 'c'
@@ -499,7 +499,7 @@ const char *ft_precision(size_t i, const char *format, va_list args)
 	return (0);
 }
 
-const char **ft_fill_str(size_t nb_args, const char *format, va_list args)
+const char **ft_fill_str(size_t nb_args, const char *format, va_list args, const char *len)
 {
 	int i;
 	size_t j;
@@ -513,7 +513,7 @@ const char **ft_fill_str(size_t nb_args, const char *format, va_list args)
 	if (!(params = malloc(sizeof(char *) * 1024)))
 		return (0);
 	printf("nb_args %zu\n", nb_args);
-	while (i < ft_strlen(format))
+	while (fct && i < ft_strlen(format))
 	{
 		fct = extract_arg(i, args, format);
 		params[j] = (char *)ft_strjoin(fct, "");
@@ -584,18 +584,22 @@ char **ft_modify_strings(size_t nb_args, size_t i, size_t j, char **params)
 			params[index]));
 			nb++;
 		}
-		else
-		{	upd_params[nb] = params[nb];
-			nb++;
-			boolean = 1;
-		}
 		i++;
 		}
-		if (boolean)
-			upd_params[nb] = 0;
-		if (nb > 1 && boolean == 0)
+		i = 0;
+		while (params[i])
+		{	
+			if (params[i][0] == '.' || params[i][0] == '*' || params[i][0] == '-'
+			|| params[i][0] == '0')
+			boolean = 1;
+			i++;
+		}
+
+		if (boolean == 0)
+			upd_params = params;
+		if (nb > 1 && boolean)
 		upd_params[nb - 1] = 0;
-		else if (nb <= 1 && boolean == 0)
+		else if (nb <= 1 && boolean)
 			upd_params[nb] = 0;
 		i = 0;
 		while (upd_params[i])
