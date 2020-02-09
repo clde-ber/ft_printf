@@ -158,7 +158,7 @@ const char		*ft_itoa(int n)
 	return ((const char *)str);
 }
 
-static int	len_int_u(unsigned int n)
+static unsigned int	len_int_u(unsigned int n)
 {
 	int	i;
 
@@ -173,7 +173,7 @@ static int	len_int_u(unsigned int n)
 	return (i);
 }
 
-static int	ft_pow_u(unsigned int nb, int pow)
+static unsigned int	ft_pow_u(unsigned int nb, int pow)
 {
 	int	i;
 	int	res;
@@ -252,7 +252,7 @@ size_t	ft_nb_params(const char *format)
 	return (nb_params);
 }
 
-char	ft_type(const char *str, const char *format)
+char	ft_type(const char *str)
 {
 	int i;
 
@@ -399,29 +399,29 @@ const char	*extract_arg(size_t i, va_list args, const char *format)
 	if (i == 0)
 		while (format[i] && format[i] != '%')
 			i++;
-	if (ft_type(&format[i], format) == 's')
+	if (ft_type(&format[i]) == 's')
 		return (va_arg(args, char *));
-	if ((ft_type(&format[i], format) == 'd' || ft_type(&format[i], format) == 'i'
-	|| ft_type(&format[i], format) == 'c'))
-		return (ft_type(&format[i], format) != 'c') ?
+	if ((ft_type(&format[i]) == 'd' || ft_type(&format[i]) == 'i'
+	|| ft_type(&format[i]) == 'c'))
+		return (ft_type(&format[i]) != 'c') ?
 		ft_itoa(va_arg(args, int))
 		: char_to_s((unsigned char)va_arg(args, int));
-	if (ft_type(&format[i], format) == 'u')
+	if (ft_type(&format[i]) == 'u')
 		return ((type = va_arg(args, int)) > 0) ? ft_itoa(type) : ft_itoa_u(type);
-	if ((ft_type(&format[i], format) == 'x' || ft_type(&format[i], format) == 'X'))
-		return (to_hex(ft_type(&format[i], format), va_arg(args, unsigned int),
+	if ((ft_type(&format[i]) == 'x' || ft_type(&format[i]) == 'X'))
+		return (to_hex(ft_type(&format[i]), va_arg(args, unsigned int),
 		"0123456789abcdef"));
-	if (ft_type(&format[i], format) == 'p')
-		return (ft_strjoin("0x", to_hex(ft_type(&format[i], format),
+	if (ft_type(&format[i]) == 'p')
+		return (ft_strjoin("0x", to_hex(ft_type(&format[i]),
 		va_arg(args, unsigned int), "0123456789abcdef")));
-	if (ft_type(&format[i], format) == '.' && (ft_isdigit(ft_type(&format[i + 1],
-		format)) || ft_type(&format[i + 1], format == '*')))
+	if (ft_type(&format[i]) == '.' && (ft_isdigit(ft_type(&format[i + 1])) || 
+	ft_type(&format[i + 1]) == '*'))
 		return ((const char *)ft_precision(i, format, args));
-	if (ft_type(&format[i], format) == '*' || ft_type(&format[i], format) == '%')
+	if (ft_type(&format[i]) == '*' || ft_type(&format[i]) == '%')
 		return ((const char *)ft_spacing(i, format, args));
-	if (ft_type(&format[i], format) == '0')
+	if (ft_type(&format[i]) == '0')
 		return (ft_strjoin("0", ""));
-	if (ft_type(&format[i], format) == '-')
+	if (ft_type(&format[i]) == '-')
 		return (ft_strjoin("-", ""));
 	i += ft_index(i, &format[i], format);
 	return (0);
@@ -453,6 +453,7 @@ const char *ft_spacing(size_t i, const char *format, va_list args)
 	else if (format[i + 1] == '.' && (ft_isdigit(format[i + 2]) == 0 ||
 	format[i + 2] != '*'))
 		return (extract_arg(++i + 1, args, format));
+	return (0);
 }
 
 const char *ft_precision(size_t i, const char *format, va_list args)
@@ -485,7 +486,7 @@ const char *ft_precision(size_t i, const char *format, va_list args)
 	return (0);
 }
 
-const char **ft_fill_str(size_t nb_args, const char *format, va_list args, const char *len)
+const char **ft_fill_str(size_t nb_args, const char *format, va_list args)
 {
 	int i;
 	size_t j;
@@ -495,10 +496,10 @@ const char **ft_fill_str(size_t nb_args, const char *format, va_list args, const
 
 	i = 0;
 	j = 0;
-	fct = 1;
+	fct = 0;
 	if (!(params = malloc(sizeof(char *) * 1024)))
 		return (0);
-	while (fct && i < ft_strlen(format))
+	while (i < ft_strlen(format))
 	{
 		fct = extract_arg(i, args, format);
 		params[j] = (char *)ft_strjoin(fct, "");
@@ -523,8 +524,8 @@ char **ft_modify_strings(size_t nb_args, size_t i, size_t j, char **params)
 	index = -1;
 	if (!(upd_params = malloc(sizeof(char *) * (nb_args + 1))))
 		return (0);
-		while (i < j && nb < nb_args)
-		{
+	while (i < j && nb < nb_args)
+	{
 		if (params[i][0] == '.' && nb < nb_args)
 		{
 			index = ft_find_arg(j, ++index, params);
@@ -568,7 +569,7 @@ char **ft_modify_strings(size_t nb_args, size_t i, size_t j, char **params)
 			nb++;
 		}
 		i++;
-		}
+	}
 		i = 0;
 		while (params[i])
 		{	
