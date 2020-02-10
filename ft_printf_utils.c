@@ -277,8 +277,6 @@ int check_conv(size_t i, const char *format)
 	while (format[i] == '.' || format[i] == '*' || format[i] == '-' ||
 	ft_isdigit(format[i]))
 		i--;
-	printf("format[i] == %c\n", format[i]);
-	printf("format[i + 1] == %c\n", format[i + 1]);
 	if (format[i + 1] == '%' || format[i] == '%')
 	{
 		return (1);
@@ -400,8 +398,6 @@ const char	*extract_arg(size_t i, va_list args, const char *format)
 	int type;
 
 	type = 0;
-	printf("ft_type %c\n", ft_type(&format[i]));
-printf("ft_type i + 1 %c\n", ft_type(&format[i + 1]));
 	if (ft_type(&format[i]) == 's')
 		return (va_arg(args, char *));
 	if ((ft_type(&format[i]) == 'd' || ft_type(&format[i]) == 'i'
@@ -465,7 +461,6 @@ const char *ft_precision(size_t i, const char *format, va_list args)
 	const char *ret;
 
 	nb_char = "0";
-	printf("precision %c\n", format[i + 1]);
 	if (ft_isdigit(format[i + 1]))
 	{
 		ret = ft_strjoin(".", char_to_s(format[i + 1]));
@@ -504,7 +499,6 @@ const char **ft_fill_str(size_t nb_args, const char *format, va_list args)
 		fct = extract_arg(i, args, format);
 		params[j] = (char *)ft_strjoin(fct, "");
 		i += ft_index(i, &format[i], format);
-		printf("params[j] = %s\n", params[j]);
 		j++;
 	}
 	params[j] = 0;
@@ -517,7 +511,8 @@ char **ft_modify_strings(size_t nb_args, size_t i, size_t j, char **params)
 	size_t nb;
 	size_t index;
 	size_t x;
-	int value;
+	int value1;
+	int value2;
 	char **upd_params;
 	int boolean;
 
@@ -525,48 +520,41 @@ char **ft_modify_strings(size_t nb_args, size_t i, size_t j, char **params)
 	nb = 0;
 	index = 0;
 	x = 0;
-	printf("J = %zu\n", j);
 	if (!(upd_params = malloc(sizeof(char *) * (nb_args + 1))))
 		return (0);
-	while (params[x])
-	{
-		printf("params[x] = %s\n", params[x]);
-		x++;
-	}
 	while (params[i] && nb < nb_args)
 	{
 		if (params[i][0] == '.' && nb < nb_args)
 		{
 			index = ft_find_arg(j, index, params);
-			value = ft_atoi(&params[i][1]);
-			if (value == 0)
+			value2 = ft_atoi(&params[i][1]);
+			if (value2 == 0)
 				upd_params[nb][0] = '\0';
-			else if (value - 1 < ft_strlen(params[index]))
+			else if (value2 - 1 < ft_strlen(params[index]))
 			{
-				upd_params[nb] = (char *)ft_strjoin(params[index], "");
-				upd_params[nb][value] = '\0';
+				upd_params[nb] = (upd_params[nb]) ? (char *)ft_strjoin(upd_params[nb], "") :
+				(char *)ft_strjoin(params[index], "");
+				upd_params[nb][value2] = '\0';
 			}
-			else if (value - 1 > ft_strlen(params[index]))
+			else if (value2 - 1 > ft_strlen(params[index]))
 			{
-				upd_params[nb] = (char *)ft_strjoin(replace_spaces(
-				(char *)ft_spaces(value, params[index])), params[index]);
+				upd_params[nb] = (upd_params[nb]) ? (char *)ft_strjoin(replace_spaces(value2, 
+				upd_params[nb]), "") :
+				(char *)ft_strjoin(replace_spaces(value2,
+				(char *)ft_spaces(value2, params[index])), params[index]);
 			}
 			if (params[i][1] == '0')
-				upd_params[nb] = replace_spaces(upd_params[nb]);
+				upd_params[nb] = replace_spaces(value2, upd_params[nb]);
 			nb = (params[i][1] == '*' || params[i][1] == '.' || params[i][1] == '-' ||
 			params[i][1] == '0') ? nb : ++nb;
 		}
 		if (((i > 0 && params[i][0] == '*' && params[i - 1][0] != '.') || (i == 0 && params[i][0] == '*' &&
 		(params[i][1] == '.' || params[i][1] == '0'))) && nb < nb_args)
 		{
-			printf("index = %zu\n", index);
 			index = ft_find_arg(j, index, params);
-			printf("valeu = %s\n", &params[i][2]);
-			printf("params[i][1] = %c\n", params[i][1]);
-			value = (params[i][1] == '0') ? ft_atoi(&params[i][2]) : ft_atoi(&params[i][1]);
-			printf("valueeee = %d\n", value);
-			upd_params[nb] = (value > ft_strlen(params[index])) ?
-			(char *)ft_strjoin(ft_spaces(value, params[index]), params[index])
+			value1 = (params[i][1] == '0') ? ft_atoi(&params[i][2]) : ft_atoi(&params[i][1]);
+			upd_params[nb] = (value1 > ft_strlen(params[index])) ?
+			(char *)ft_strjoin(ft_spaces(value1, params[index]), params[index])
 			: (char *)ft_strjoin(params[index], "");
 		//	if (params[i][1] == '0')
 		//		upd_params[nb] = replace_spaces(upd_params[nb]);
@@ -576,17 +564,17 @@ char **ft_modify_strings(size_t nb_args, size_t i, size_t j, char **params)
 		if (params[i][0] == '0' && params[i][1] == 'f' && nb < nb_args)
 		{
 			index = ft_find_arg(j, index, params);
-			upd_params[nb] = (char *)replace_spaces(params[index]);
+			upd_params[nb] = (char *)replace_spaces(ft_strlen(params[index]), params[index]);
 			nb = (params[i][1] == '*' || params[i][1] == '.' || params[i][1] == '-' ||
 			params[i][1] == '0') ? nb : ++nb;
 		}
 		if (params[i][0] == '-' && nb < nb_args)
 		{
 			index = ft_find_arg(j, index, params);
-			upd_params[nb] = (char *)ft_strjoin(params[index], ft_spaces(value,
+			upd_params[nb] = (char *)ft_strjoin(params[index], ft_spaces(value1,
 			params[index]));
 			if (params[i][1] == '0')
-				upd_params[nb] = replace_spaces(upd_params[nb]);
+				upd_params[nb] = replace_spaces(value1, upd_params[nb]);
 			nb = (params[i][1] == '*' || params[i][1] == '.' || params[i][1] == '-' ||
 			params[i][1] == '0') ? nb : ++nb;
 		}
@@ -625,15 +613,17 @@ size_t ft_find_arg(size_t j, size_t find_index, char **params)
 		return (find_index);
 }
 
-const char *replace_spaces(char *str)
+const char *replace_spaces(int value, char *str)
 {
 	size_t i;
 
-	i = 0;
-	while (str[i] == ' ')
+	i = ft_strlen(str);
+	while (i && value >= 0)
 	{
-		str[i] = '0';
-		i++;
+		if (str[i] == ' ')
+			str[i] = '0';
+		i--;
+		value--;
 	}
 	return (str);
 }
@@ -644,16 +634,13 @@ const char *ft_spaces(size_t value, char *param)
 	char *str;
 
 	i = 0;
-	printf("valuueueeeee %d\n", value);
 	if (!(str = malloc(sizeof(char) * (value + 1))))
 		return (0);
-	printf("len param [index]%d\n", ft_strlen(param));
 	while (i + ft_strlen(param) < value)
 	{
 		str[i] = ' ';
 		i++;
 	}
-	printf("iii = %zu\n", i);
 	str[i] = '\0';
 	return (str);
 }
