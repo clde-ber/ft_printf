@@ -33,7 +33,7 @@ const char **ft_fill_str(size_t nb_args, const char *format, va_list args);
 const char *ft_precision(size_t i, const char *format, va_list args);
 const char *ft_spacing(size_t i, const char *format, va_list args);
 char **ft_modify_strings(size_t nb_args, size_t i, size_t j, char **params);
-const char *replace_spaces(char *str);
+const char *replace_spaces(int value, char *str);
 const char *ft_spaces(size_t value, char *param);
 size_t ft_find_arg(size_t j, size_t find_index, char **params);
 int check_conv(size_t i, const char *format);
