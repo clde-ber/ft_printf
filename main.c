@@ -10,6 +10,11 @@ int main()
 	printf("ret = %d\n", ft_printf("%%p::[%1.50d]\n", 8473));
 	printf("%d\n", printf("15unsigned 1 %.u unsigned 2 %.u\n", 42, -42));
 	printf("%d\n", ft_printf("15unsigned 1 %.u unsigned 2 %.u\n", 42, -42));
+	printf("%.u\n", 0);
+	ft_printf("%.u\n", 0);
+	printf("%08.5u\n", 34);
+	ft_printf("%08.5u\n", 34);
+
 
 
 /*	i = 400000;
@@ -40,4 +45,3 @@ int		main(int ac, char **av)
 //	printf("params %s\n", params);
 	return (0);
 }*/
-
