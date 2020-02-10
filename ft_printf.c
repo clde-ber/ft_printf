@@ -4,7 +4,7 @@ int	ft_printf(const char *format, ...)
 {
 	const char **tab;
 	int i;
-	size_t j;
+	int j;
 	int nb_args;
 	va_list	args;
 	int ret;
@@ -40,6 +40,7 @@ int	ft_printf(const char *format, ...)
 			ret++;
 		}
 	}
+	printf("nb_args %d\n", nb_args);
 	tab = ft_fill_str(nb_args, &format[i], args);
 	j = i;
 	i = 0;
@@ -78,9 +79,9 @@ int	ft_printf(const char *format, ...)
 		format[j] == 'x'|| format[j] == 'X' || format[j] == 'p' ||
 		ft_isdigit(format[j]))
 			j++;
-	if (boolean)
+	if (boolean && j < ft_strlen(format))
 		ft_putstr((char *)&format[j]);
-	else
+	else if (boolean == 0 && j + 1 < ft_strlen(format))
 		ft_putstr((char *)&format[j + 1]);
 	ret += ft_strlen(&format[j]);
 	va_end(args);
