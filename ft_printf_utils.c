@@ -510,7 +510,6 @@ char **ft_modify_strings(size_t nb_args, size_t i, size_t j, char **params)
 {
 	size_t nb;
 	size_t index;
-	size_t x;
 	int value1;
 	int value2;
 	char **upd_params;
@@ -519,7 +518,6 @@ char **ft_modify_strings(size_t nb_args, size_t i, size_t j, char **params)
 	boolean = 0;
 	nb = 0;
 	index = 0;
-	x = 0;
 	if (!(upd_params = malloc(sizeof(char *) * (nb_args + 1))))
 		return (0);
 	while (params[i] && nb < nb_args)
@@ -544,9 +542,7 @@ char **ft_modify_strings(size_t nb_args, size_t i, size_t j, char **params)
 				(char *)ft_spaces(value2, params[index])), params[index]);
 			}
 			if (params[i][1] == '0')
-				upd_params[nb] = replace_spaces(value2, upd_params[nb]);
-			nb = (params[i][1] == '*' || params[i][1] == '.' || params[i][1] == '-' ||
-			params[i][1] == '0') ? nb : ++nb;
+				upd_params[nb] = (char *)replace_spaces(value2, upd_params[nb]);
 		}
 		if (((i > 0 && params[i][0] == '*' && params[i - 1][0] != '.') || (i == 0 && params[i][0] == '*' &&
 		(params[i][1] == '.' || params[i][1] == '0'))) && nb < nb_args)
@@ -558,26 +554,22 @@ char **ft_modify_strings(size_t nb_args, size_t i, size_t j, char **params)
 			: (char *)ft_strjoin(params[index], "");
 		//	if (params[i][1] == '0')
 		//		upd_params[nb] = replace_spaces(upd_params[nb]);
-			nb = (params[i][1] == '*' || params[i][1] == '.' || params[i][1] == '-' ||
-			params[i][1] == '0') ? nb : ++nb;
 		}
 		if (params[i][0] == '0' && params[i][1] == 'f' && nb < nb_args)
 		{
 			index = ft_find_arg(j, index, params);
 			upd_params[nb] = (char *)replace_spaces(ft_strlen(params[index]), params[index]);
-			nb = (params[i][1] == '*' || params[i][1] == '.' || params[i][1] == '-' ||
-			params[i][1] == '0') ? nb : ++nb;
 		}
 		if (params[i][0] == '-' && nb < nb_args)
 		{
 			index = ft_find_arg(j, index, params);
-			upd_params[nb] = (char *)ft_strjoin(params[index], ft_spaces(value1,
-			params[index]));
+			upd_params[nb] = (char *)ft_strjoin(params[index], 
+			ft_spaces(value1, params[index]));
 			if (params[i][1] == '0')
-				upd_params[nb] = replace_spaces(value1, upd_params[nb]);
-			nb = (params[i][1] == '*' || params[i][1] == '.' || params[i][1] == '-' ||
-			params[i][1] == '0') ? nb : ++nb;
+				upd_params[nb] = (char *)replace_spaces(value1, upd_params[nb]);
 		}
+		if (i != 0 && upd_params[nb - 1])
+			nb++;
 		i++;
 	}
 		i = 0;
