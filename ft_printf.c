@@ -40,7 +40,6 @@ int	ft_printf(const char *format, ...)
 			ret++;
 		}
 	}
-	printf("nb_args %d\n", nb_args);
 	tab = ft_fill_str(nb_args, &format[i], args);
 	j = i;
 	i = 0;
