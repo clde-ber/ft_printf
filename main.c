@@ -3,20 +3,12 @@ int main()
 {
 //	ft_printf("%d%X%x", 25631654, 1000000, 2358);
 //	printf("%d%X%x", 25631654, 1000000, 2358);
-	printf("ft_itoa %s\n", ft_itoa(1));
-	printf("ultimate %*.*d *.*s\n", 1, 50, 5000, 1, 0, "hey");
-	ft_printf("ultimate %*.*d *.*s\n", 1, 50, 5000, 1, 0, "hey");
-	printf("ret = %d\n", printf("%%p::[%1.50d]\n", 8473));
-	printf("ret = %d\n", ft_printf("%%p::[%1.50d]\n", 8473));
-	printf("%d\n", printf("15unsigned 1 %.u unsigned 2 %.u\n", 42, -42));
-	printf("%d\n", ft_printf("15unsigned 1 %.u unsigned 2 %.u\n", 42, -42));
-	printf("%.u\n", 0);
-	ft_printf("%.u\n", 0);
-	printf("%08.5u\n", 34);
-	ft_printf("%08.5u\n", 34);
-
-
-
+	printf("%d\n", ft_printf("ultimate %*.*d     *.*s\n", 1, 50, 5000, 1, 0, "hey"));
+	printf("%d\n", printf("ultimate %*.*d     *.*s\n", 1, 50, 5000, 1, 0, "hey"));
+//	printf("ret = %d\n", printf("%%p::[%1.50d]\n", 8473));
+//	printf("ret = %d\n", ft_printf("%%p::[%1.50d]\n", 8473));
+//	printf("%d\n\n", printf("15unsigned 1 %.u unsigned 2 %.u\n\n", 42, -42));
+//	printf("%d\n\n", ft_printf("15unsigned 1 %.u unsigned 2 %.u\n\n", 42, -42));
 /*	i = 400000;
 	printf("%d", i);
 	printf("sizeof int %d\n", sizeof(int));
