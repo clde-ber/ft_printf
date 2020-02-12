@@ -44,5 +44,6 @@ char *no_arg(char *str);
 char *ft_modify(int i, char **tab, char *flag);
 void ft_putchar(char c);
 void ft_putstr(char *str);
+const char	*join_a_free(const char *s1, const char *s2);
 
 #endif
