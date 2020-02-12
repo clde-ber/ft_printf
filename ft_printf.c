@@ -27,9 +27,12 @@ int	ft_printf(const char *format, ...)
 	va_start(args, format);
 	while (format[j])
 	{
+		while (ft_isdigit(format[j]) && check_conv(j, format))
+		j++;
 		tab[i] = (char *)extract_arg(j, args, format);
-	//	printf("%s\n", tab[i]);
-		i = (format[j] == '%') ? i : ++i;
+	//	printf("tab[i]%s\n", tab[i]);
+		if (format[j] != '%' || (format[j] == '%' && format[j + 1] == '%'))
+			i++;
 		j++;
 	}
 	tab[i] = 0;
