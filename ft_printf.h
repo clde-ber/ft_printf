@@ -1,39 +1,49 @@
-#include "ft_printf.h"
-int main()
-{
-	ft_printf("%d%X%x\n", 25631654, 1000000, 2358);
-	printf("%d%X%x\n", 25631654, 1000000, 2358);
-	printf("%d\n", ft_printf("ultimate %*.*d     *.*s\n", 1, 50, 5000, 1, 0, "hey"));
-	printf("%d\n", printf("ultimate %*.*d     *.*s\n", 1, 50, 5000, 1, 0, "hey"));
-	printf("ret = %d\n", printf("%%p::[%1.50d]\n", 8473));
-	printf("ret = %d\n", ft_printf("%%p::[%1.50d]\n", 8473));
-//	printf("%d\n\n", printf("15unsigned 1 %.u unsigned 2 %.u\n\n", 42, -42));
-//	printf("%d\n\n", ft_printf("15unsigned 1 %.u unsigned 2 %.u\n\n", 42, -42));
-/*	i = 400000;
-	printf("%d", i);
-	printf("sizeof int %d\n", sizeof(int));
-	printf("sizeof char %d\n", sizeof(char));
-	printf("sizeof char * %d\n", sizeof(char *));
-	printf("sizeof uint %d\n", sizeof(unsigned int));
-	printf("sizeof ulong %d\n", sizeof(unsigned long));
-	printf("sizeof unsigned char %d\n", sizeof(unsigned char));
-*/
-	return (0);
-}/*
-int		main(int ac, char **av)
-{
-	(void)ac;
-	size_t i;
-	const char *format = "%s\n";
-	const char *params;
-	i = 1;
-	while (av[i + 1])
-	{
-		params = (i == 1) ? ft_strjoin(av[i], av[i + 1]) : ft_strjoin(params, av[i + 1]);
-//		printf(format, params);
-		i++;
-	}
-	ft_printf(format, "hello", "toi", "ca", "va");
-//	printf("params %s\n", params);
-	return (0);
-}*/
+#ifndef FT_PRINTF_H
+# define FT_PRINTF_H
+
+# include <stdio.h>
+# include <stdlib.h>
+# include <stddef.h>
+# include <stdarg.h>
+# include <unistd.h>
+
+int	ft_printf(const char *format, ...);
+int		ft_format(const char *format);
+int	ft_isdigit(int c);
+int	ft_strlen(const char *s);
+const char	*ft_strjoin(const char *s1, const char *s2);
+char	**ft_order_params(size_t j, const char *params, const char *format);
+const void	*ft_memmove(const void *dst, const void *src, size_t len);
+const char		*ft_itoa(int n);
+const char		*ft_itoa_u(unsigned int n);
+int	ft_atoi(const char *str);
+size_t	ft_nb_params(const char *format);
+char	ft_type(const char *str, const char *format);
+size_t	ft_index(size_t j, const char *str, const char *format);
+char	*char_to_s(int x);
+char	*to_hex(char c, unsigned int n, char *base);
+char	*revstr(char *str);
+char *str_toupper(char *str);
+const char	*extract_arg(size_t i, va_list args, const char *format);
+char			**ft_split(char const *s, char c);
+void	*ft_calloc(size_t count, size_t size);
+char **ft_rewrite_format(const char *format);
+char *ft_replace_format(char **new_format, const char *format, char *n_format);
+int             ft_is_value(char c);
+const char **ft_fill_str(size_t nb_args, const char *format, va_list args);
+char *ft_precision(size_t i, const char *format, va_list args);
+char *ft_spacing(size_t i, const char *format, va_list args);
+char **ft_modify_strings(size_t nb_args, size_t i, size_t j, char **params);
+char *replace_spaces(char *str);
+char *ft_spaces(size_t value, char *param);
+size_t ft_find_arg(size_t j, size_t find_index, char **params);
+int check_conv(size_t i, const char *format);
+int ft_is_conv(char c);
+char *rev_flag(char *str);
+char *no_arg(char *str);
+char *ft_modify(int i, char **tab, char *flag);
+void ft_putchar(char c);
+void ft_putstr(char *str);
+const char	*join_a_free(const char *s1, const char *s2);
+
+#endif
