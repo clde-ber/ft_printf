@@ -39,6 +39,27 @@ const char	*ft_strjoin(const char *s1, const char *s2)
 	return ((const char *)ptr);
 }
 
+const char	*join_a_free(const char *s1, const char *s2)
+{
+	size_t	i;
+	size_t	j;
+	char	*ptr;
+
+	i = -1;
+	j = -1;
+	if (!s1 || !s2)
+		return (0);
+	if (!(ptr = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1))))
+		return (0);
+	while (s1[++i])
+		ptr[i] = s1[i];
+	while (s2[++j])
+		ptr[i + j] = s2[j];
+	ptr[i + j] = '\0';
+	free(s1);
+	return ((const char *)ptr);
+}
+
 const void	*ft_memmove(const void *dst, const void *src, size_t len)
 {
 	unsigned char	*tmp_src;
@@ -321,7 +342,7 @@ int check_conv(size_t i, const char *format)
 {
 	while (format[i] == '.' || format[i] == '*' || format[i] == '-' || ft_isdigit(format[i])
 	|| format[i] == 'c' || format[i] == 's' || format[i] == 'p' || format[i] == 'i' || format[i]
-	== 'd' || format[i] == 'x'|| format[i] == 'X')
+	== 'd' || format[i] == 'x'|| format[i] == 'X' || format[i] == 'u')
 		i--;
 	if (format[i] == '%')
 //	{
@@ -337,7 +358,7 @@ const char	*extract_arg(size_t i, va_list args, const char *format)
 
 		type = 0;
 	//	printf("i = %zu\n", i);
-	//	printf("format[i] %c\n", format[i]);
+	//	printf("format[i]%c\n", format[i]);
 	if (format[i] == 's' && check_conv(i, format))
 		return (va_arg(args, char *));
 	if ((format[i] == 'd' || format[i] == 'i'
@@ -372,13 +393,6 @@ char *ft_modify(int i, char **tab, char *flag)
 
 	j = 0;
 	value = 0;
-	while (tab[i])
-	{
-		if (tab[i][0] != 'f' && tab[i][1] != '0' && tab[i][1] != '.' && tab[i][1] != '*'
-		&& tab[i][1] != '-')
-			break ;
-		i++;
-	}
 //	printf("i = %d\n", i);
 //	printf("flag = %s\n", flag);
 	while (flag[j++])
@@ -396,15 +410,15 @@ char *ft_modify(int i, char **tab, char *flag)
 	if (flag[1] == '.')
 	{
 		if (value < ft_strlen(tab[i]))
-			tab[i][value] = '\0';
+			tab[i][value - 1] = '\0';
 		else
-			tab[i] = ft_strjoin(replace_spaces(ft_spaces(value,
+			tab[i] = join_a_free(replace_spaces(ft_spaces(value - ft_strlen(tab[i]),
 			tab[i])), "");
 	}
 	if (flag[1] == '*')
 	{
 		if (value > ft_strlen(tab[i]))
-			tab[i] = ft_strjoin(ft_spaces(value, tab[i]), tab[i]);
+			tab[i] = join_a_free(ft_spaces(value - ft_strlen(tab[i]), tab[i]), tab[i]);
 	}
 //	printf("tab[i] = %s\n", tab[i]);
 	return (tab[i]);
