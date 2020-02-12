@@ -56,7 +56,7 @@ const char	*join_a_free(const char *s1, const char *s2)
 	while (s2[++j])
 		ptr[i + j] = s2[j];
 	ptr[i + j] = '\0';
-	free(s1);
+	free((char *)s1);
 	return ((const char *)ptr);
 }
 
@@ -150,9 +150,9 @@ const char		*ft_itoa(int n)
 	return ((const char *)str);
 }
 
-static int	len_int_u(unsigned int n)
+static unsigned int	len_int_u(unsigned int n)
 {
-	int	i;
+	unsigned int	i;
 
 	i = 0;
 	if (n == 0)
@@ -165,10 +165,10 @@ static int	len_int_u(unsigned int n)
 	return (i);
 }
 
-static int	ft_pow_u(unsigned int nb, int pow)
+static unsigned int	ft_pow_u(unsigned int nb, unsigned int pow)
 {
-	int	i;
-	int	res;
+	unsigned int	i;
+	unsigned int	res;
 
 	i = 0;
 	res = 1;
@@ -187,7 +187,7 @@ const char		*ft_itoa_u(unsigned int n)
 	unsigned int		k;
 	char	*str;
 
-	printf("n = %u\n", n);
+//	printf("n = %u\n", n);
 	i = 0;
 	k = n;
 	j = len_int_u(k);
@@ -243,24 +243,6 @@ size_t	ft_nb_params(const char *format)
 		i++;
 	}
 	return (nb_params);
-}
-
-char	ft_type(const char *str, const char *format)
-{
-	int i;
-
-	i = 0;
-	while (str[i])
-	{
-		printf("str[i] = %c\n", str[i]);
-		if (str[i] == 'd' || str[i] == 'i' || str[i] == 'c' ||
-		str[i] == 's' || str[i] == 'u' || str[i] == 'x'||
-		str[i] == 'X' || str[i] == 'p' || str[i] == '0' ||
-		str[i] == '.' || str[i] == '-' || str[i] == '*' || str[i] == '%')
-			return (str[i]);
-		i++;
-	}
-	return (str[i]);
 }
 
 char	*char_to_s(int x)
@@ -344,7 +326,7 @@ int check_conv(size_t i, const char *format)
 	|| format[i] == 'c' || format[i] == 's' || format[i] == 'p' || format[i] == 'i' || format[i]
 	== 'd' || format[i] == 'x'|| format[i] == 'X' || format[i] == 'u')
 		i--;
-	if (format[i] == '%')
+	if ((i == 0 && format[i] == '%') || (i > 0 && format[i] == '%' && format[i - 1] != '%'))
 //	{
 	//	printf("AAAAAAA");
 		return (1);
@@ -358,7 +340,9 @@ const char	*extract_arg(size_t i, va_list args, const char *format)
 
 		type = 0;
 	//	printf("i = %zu\n", i);
-	//	printf("format[i]%c\n", format[i]);
+	while (ft_isdigit(format[i]) && check_conv(i, format))
+//	{printf("format[i]%c\n", format[i]);
+	i++;
 	if (format[i] == 's' && check_conv(i, format))
 		return (va_arg(args, char *));
 	if ((format[i] == 'd' || format[i] == 'i'
@@ -377,7 +361,8 @@ const char	*extract_arg(size_t i, va_list args, const char *format)
 	if (check_conv(i, format) && format[i] == '.' && (ft_isdigit(format[i + 1]) ||
 		format[i + 1] == '*'))
 		return ((const char *)ft_precision(i, format, args));
-	if ((format[i] == '*' || format[i] == '%') && check_conv(i, format))
+	if ((format[i] == '*' || (format[i] == '%' && format[i + 1] != '%')) 
+		&& check_conv(i, format))
 		return ((const char *)ft_spacing(i, format, args));
 	if (format[i] == '0' && check_conv(i, format))
 		return (ft_strjoin("f0", ""));
@@ -412,13 +397,13 @@ char *ft_modify(int i, char **tab, char *flag)
 		if (value < ft_strlen(tab[i]))
 			tab[i][value - 1] = '\0';
 		else
-			tab[i] = join_a_free(replace_spaces(ft_spaces(value - ft_strlen(tab[i]),
+			tab[i] = (char *)join_a_free(replace_spaces(ft_spaces(value - ft_strlen(tab[i]),
 			tab[i])), "");
 	}
 	if (flag[1] == '*')
 	{
 		if (value > ft_strlen(tab[i]))
-			tab[i] = join_a_free(ft_spaces(value - ft_strlen(tab[i]), tab[i]), tab[i]);
+			tab[i] = (char *)join_a_free(ft_spaces(value - ft_strlen(tab[i]), tab[i]), tab[i]);
 	}
 //	printf("tab[i] = %s\n", tab[i]);
 	return (tab[i]);
@@ -509,11 +494,9 @@ char *rev_flag(char *str)
 {
 	int i;
 	int j;
-	char *spaces;
 
 	i = 0;
 	j = 0;
-	spaces = (char *)ft_strjoin(" ", "");
 	while (str[i] == ' ')
 		i++;
 	str = (char *)ft_strjoin(&str[i], "");
