@@ -28,8 +28,8 @@ int	ft_printf(const char *format, ...)
 	while (format[j])
 	{
 		tab[i] = (char *)extract_arg(j, args, format);
-		printf("%s\n", tab[i]);
-		i++;
+	//	printf("%s\n", tab[i]);
+		i = (format[j] == '%') ? i : ++i;
 		j++;
 	}
 	tab[i] = 0;
@@ -43,7 +43,11 @@ int	ft_printf(const char *format, ...)
 		{
 			if (tab[i][x] != '@' && tab[i][0] != 'f')
 			{
+			//	printf("x = %d\n", x);
+			//	printf("i = %d\n", i);
+			//	printf("tab[i][x] %c\n", tab[i][x]);
 				ft_putchar(tab[i][x]);
+			//	printf("tab[i]%s\n", tab[i]);
 				ret++;
 			}
 			x++;
