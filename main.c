@@ -1,12 +1,12 @@
 #include "ft_printf.h"
 int main()
 {
-//	ft_printf("%d%X%x", 25631654, 1000000, 2358);
-//	printf("%d%X%x", 25631654, 1000000, 2358);
+	ft_printf("%d%X%x\n", 25631654, 1000000, 2358);
+	printf("%d%X%x\n", 25631654, 1000000, 2358);
 	printf("%d\n", ft_printf("ultimate %*.*d     *.*s\n", 1, 50, 5000, 1, 0, "hey"));
 	printf("%d\n", printf("ultimate %*.*d     *.*s\n", 1, 50, 5000, 1, 0, "hey"));
-//	printf("ret = %d\n", printf("%%p::[%1.50d]\n", 8473));
-//	printf("ret = %d\n", ft_printf("%%p::[%1.50d]\n", 8473));
+	printf("ret = %d\n", printf("%%p::[%1.50d]\n", 8473));
+	printf("ret = %d\n", ft_printf("%%p::[%1.50d]\n", 8473));
 //	printf("%d\n\n", printf("15unsigned 1 %.u unsigned 2 %.u\n\n", 42, -42));
 //	printf("%d\n\n", ft_printf("15unsigned 1 %.u unsigned 2 %.u\n\n", 42, -42));
 /*	i = 400000;
