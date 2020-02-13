@@ -322,9 +322,9 @@ char	*revstr(char *str)
 
 int check_conv(size_t i, const char *format)
 {
-	while (format[i] == '.' || format[i] == '*' || format[i] == '-' || ft_isdigit(format[i])
+	while (i > 0 && (format[i] == '.' || format[i] == '*' || format[i] == '-' || ft_isdigit(format[i])
 	|| format[i] == 'c' || format[i] == 's' || format[i] == 'p' || format[i] == 'i' || format[i]
-	== 'd' || format[i] == 'x'|| format[i] == 'X' || format[i] == 'u')
+	== 'd' || format[i] == 'x'|| format[i] == 'X' || format[i] == 'u'))
 		i--;
 	if ((i == 0 && format[i] == '%') || (i > 0 && format[i] == '%' && format[i - 1] != '%'))
 //	{
@@ -361,7 +361,7 @@ const char	*extract_arg(size_t i, va_list args, const char *format)
 	if (check_conv(i, format) && format[i] == '.' && (ft_isdigit(format[i + 1]) ||
 		format[i + 1] == '*'))
 		return ((const char *)ft_precision(i, format, args));
-	if ((format[i] == '*' || (format[i] == '%' && format[i + 1] != '%')) 
+	if ((format[i] == '*' || (format[i] == '%' && format[i + 1] != '%'))
 		&& check_conv(i, format))
 		return ((const char *)ft_spacing(i, format, args));
 	if (format[i] == '0' && check_conv(i, format))
@@ -403,7 +403,7 @@ char *ft_modify(int i, char **tab, char *flag)
 	if (flag[1] == '*')
 	{
 		if (value > ft_strlen(tab[i]))
-			tab[i] = (char *)join_a_free(ft_spaces(value - ft_strlen(tab[i]), tab[i]), tab[i]);
+			tab[i] = (char *)join_a_free(ft_spaces(value - ft_strlen(tab[i]) - 1, tab[i]), "");
 	}
 //	printf("tab[i] = %s\n", tab[i]);
 	return (tab[i]);
