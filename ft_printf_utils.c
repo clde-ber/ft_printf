@@ -322,9 +322,9 @@ char	*revstr(char *str)
 
 int check_conv(size_t i, const char *format)
 {
-	while (i > 0 && (format[i] == '.' || format[i] == '*' || format[i] == '-' || ft_isdigit(format[i])
+	while (format[i] == '.' || format[i] == '*' || format[i] == '-' || ft_isdigit(format[i])
 	|| format[i] == 'c' || format[i] == 's' || format[i] == 'p' || format[i] == 'i' || format[i]
-	== 'd' || format[i] == 'x'|| format[i] == 'X' || format[i] == 'u'))
+	== 'd' || format[i] == 'x'|| format[i] == 'X' || format[i] == 'u')
 		i--;
 	if ((i == 0 && format[i] == '%') || (i > 0 && format[i] == '%' && format[i - 1] != '%'))
 //	{
@@ -387,6 +387,9 @@ char *ft_modify(int i, char **tab, char *flag)
 			value = ft_atoi(&flag[j]);
 			break ;
 		}
+//	while (tab[i][0] == 'f' || tab[i][0] == '@')
+//			i++;
+//	printf("i = %d\n", i);
 //	printf("value = %zu\n", value);
 	if (flag[1] == '0')
 		tab[i] = replace_spaces(tab[i]);
