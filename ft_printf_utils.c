@@ -392,15 +392,15 @@ char *ft_modify(int i, char **tab, char *flag)
 //	printf("i = %d\n", i);
 //	printf("value = %zu\n", value);
 	if (flag[1] == '0')
-		tab[i] = replace_spaces(tab[i]);
+		tab[i] = replace_spaces(value, tab[i]);
 	if (flag[1] == '-')
 		tab[i] = rev_flag(tab[i]);
 	if (flag[1] == '.')
 	{
 		if (value < ft_strlen(tab[i]))
 			tab[i][value - 1] = '\0';
-		else
-			tab[i] = (char *)join_a_free(replace_spaces(ft_spaces(value - ft_strlen(tab[i]),
+		else if (value > ft_strlen(tab[i]))
+			tab[i] = (char *)join_a_free(replace_spaces(value, ft_spaces(value - ft_strlen(tab[i]),
 			tab[i])), "");
 	}
 	if (flag[1] == '*')
@@ -437,7 +437,8 @@ char *ft_spacing(size_t i, const char *format, va_list args)
 		return ((char *)ft_strjoin("f*", width));
 	}
 	else
-		return ((char *)no_arg((char *)extract_arg(i + 2, args, format)));
+		return (ft_strjoin("", ""));
+	//	return ((char *)no_arg((char *)extract_arg(i + 2, args, format)));
 }
 
 char *ft_precision(size_t i, const char *format, va_list args)
@@ -464,7 +465,8 @@ char *ft_precision(size_t i, const char *format, va_list args)
 		return ((char *)ft_strjoin("f.", nb_char));
 	}
 	else
-		return ((char *)no_arg((char *)extract_arg(i + 2, args, format)));
+		return (ft_strjoin("", ""));
+	//	return ((char *)no_arg((char *)extract_arg(i + 2, args, format)));
 }
 
 char *no_arg(char *str)
@@ -480,15 +482,25 @@ char *no_arg(char *str)
 	return (str);
 }
 
-char *replace_spaces(char *str)
+char *replace_spaces(int value, char *str)
 {
 	size_t i;
+	char *zero;
 
 	i = 0;
 	while (str[i] == ' ')
 	{
 		str[i] = '0';
 		i++;
+	}
+	if (i == 0)
+	{
+		while (i + ft_strlen(str) < value)
+		{
+			zero = ft_strjoin("0", "");
+			i++;
+		}
+		return (ft_strjoin(zero, str));
 	}
 	return (str);
 }
