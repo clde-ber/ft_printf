@@ -285,6 +285,7 @@ char	*to_hex(char c, unsigned int n, char *base)
 	str = revstr(str);
 	if (c == 'X')
 		str = str_toupper(str);
+//	printf("to hex %s\n", str);
 	return (str);
 }
 
@@ -323,10 +324,15 @@ char	*revstr(char *str)
 
 int check_conv(size_t i, const char *format)
 {
-	while (format[i] == '.' || format[i] == '*' || format[i] == '-' || ft_isdigit(format[i])
+	while (i > 0 && format[i] == '.' || format[i] == '*' || format[i] == '-' || ft_isdigit(format[i])
 	|| format[i] == 'c' || format[i] == 's' || format[i] == 'p' || format[i] == 'i' || format[i]
 	== 'd' || format[i] == 'x'|| format[i] == 'X' || format[i] == 'u')
+	{
+		if (i > 0)
 		i--;
+		if (i == 0)
+	 	break ;
+	}
 	if ((i == 0 && format[i] == '%') || (i > 0 && format[i] == '%' && format[i - 1] != '%'))
 //	{
 	//	printf("AAAAAAA");
@@ -344,6 +350,7 @@ const char	*extract_arg(size_t i, va_list args, const char *format)
 	while (ft_isdigit(format[i]) && check_conv(i, format))
 //	{printf("format[i]%c\n", format[i]);
 	i++;
+//	printf("format[i] = %c\n", format[i]);
 	if (format[i] == 's' && check_conv(i, format))
 		return (va_arg(args, char *));
 	if ((format[i] == 'd' || format[i] == 'i'
@@ -505,6 +512,9 @@ char *replace_spaces(int value, char *str)
 
 	i = 0;
 //	printf("str = %s\n", str);
+//	printf("i == %d\n", i);
+	if (!str)
+		return (ft_strjoin("", ""));
 	while (str[i] == ' ')
 	{
 		str[i] = '0';
