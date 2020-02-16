@@ -324,9 +324,9 @@ char	*revstr(char *str)
 
 int check_conv(size_t i, const char *format)
 {
-	while (i > 0 && format[i] == '.' || format[i] == '*' || format[i] == '-' || ft_isdigit(format[i])
+	while (i > 0 && (format[i] == '.' || format[i] == '*' || format[i] == '-' || ft_isdigit(format[i])
 	|| format[i] == 'c' || format[i] == 's' || format[i] == 'p' || format[i] == 'i' || format[i]
-	== 'd' || format[i] == 'x'|| format[i] == 'X' || format[i] == 'u')
+	== 'd' || format[i] == 'x'|| format[i] == 'X' || format[i] == 'u'))
 	{
 		if (i > 0)
 		i--;
@@ -414,7 +414,7 @@ char *ft_modify(int i, char **tab, char *flag)
 //	printf("i = %d\n", i);
 //	printf("value = %zu\n", value);
 	if (flag[1] == '0')
-		tab[i] = replace_spaces(value, tab[i]);
+		tab[i] = replace_spaces(ft_spaces(value, tab[i]), tab[i]);
 	if (flag[1] == '-')
 		tab[i] = rev_flag(tab[i]);
 	if (flag[1] == '.')
@@ -460,7 +460,7 @@ char *ft_spacing(size_t i, const char *format, va_list args)
 		return ((char *)ft_strjoin("f*", width));
 	}
 	else
-		return (ft_strjoin("", ""));
+		return ((char *)ft_strjoin("", ""));
 	//	return ((char *)no_arg((char *)extract_arg(i + 2, args, format)));
 }
 
@@ -488,7 +488,7 @@ char *ft_precision(size_t i, const char *format, va_list args)
 		return ((char *)ft_strjoin("f.", nb_char));
 	}
 	else
-		return (ft_strjoin("", ""));
+		return ((char *)ft_strjoin("", ""));
 	//	return ((char *)no_arg((char *)extract_arg(i + 2, args, format)));
 }
 
@@ -507,14 +507,15 @@ char *no_arg(char *str)
 
 char *replace_spaces(int value, char *str)
 {
-	size_t i;
+	int i;
 	char *zero;
 
 	i = 0;
+	zero = (char *)ft_strjoin("0", "");
 //	printf("str = %s\n", str);
-//	printf("i == %d\n", i);
+//	printf("value == %d\n", value);
 	if (!str)
-		return (ft_strjoin("", ""));
+		return ((char *)ft_strjoin("", ""));
 	while (str[i] == ' ')
 	{
 		str[i] = '0';
@@ -524,10 +525,10 @@ char *replace_spaces(int value, char *str)
 	{
 		while (i < value)
 		{
-			zero = ft_strjoin("0", "");
+			zero = (char *)ft_strjoin(zero, "");
 			i++;
 		}
-		return (ft_strjoin(zero, str));
+		return ((char *)ft_strjoin(zero, str));
 	}
 //	printf("strfin %s\n", str);
 	return (str);
@@ -551,12 +552,13 @@ char *rev_flag(char *str)
 	return (str);
 }
 
-char *ft_spaces(size_t value, char *param)
+char *ft_spaces(int value, char *param)
 {
-	size_t i;
+	int i;
 	char *str;
 
 	i = 0;
+//	printf("value!%d\n", value);
 //	printf("param %s\n", param);
 	if (!(str = malloc(sizeof(char) * (value + 1))))
 		return (0);
@@ -566,7 +568,7 @@ char *ft_spaces(size_t value, char *param)
 		i++;
 	}
 	str[i] = '\0';
-	return (ft_strjoin(str, param));
+	return ((char *)ft_strjoin(str, param));
 }
 
 int		ft_is_value(char c)
