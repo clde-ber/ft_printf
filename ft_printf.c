@@ -45,8 +45,9 @@ int	ft_printf(const char *format, ...)
 	tab[i] = 0;
 	i = 0;
 	j = 0;
-	while (tab[i])
+	while (tab[i] && i + 1 < ft_strlen(format))
 	{
+	//	printf("i%d\n", i);
 		if (tab[i][0] == 'f' && (tab[i][1] == '0' || tab[i][1] == '.' || tab[i][1] == '*' || tab[i][1] == '-'))
 		{
 			j += find_arg(j, tab);
@@ -65,7 +66,7 @@ int	ft_printf(const char *format, ...)
 			}
 			x++;
 			}
-		//	printf("2 - tab[i]%s\n", tab[i]);
+	//		printf("2 - tab[i]%s\n", tab[i]);
 	//	printf("%d\n", i);
 		i++;
 		x = 0;
