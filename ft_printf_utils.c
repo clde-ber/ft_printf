@@ -1,3 +1,4 @@
+
 #include "ft_printf.h"
 
 int	ft_isdigit(int c)
@@ -371,6 +372,17 @@ const char	*extract_arg(size_t i, va_list args, const char *format)
 	return (ft_strjoin("@", char_to_s(format[i])));
 }
 
+int find_arg(int i, char **tab)
+{
+	while (tab[i])
+	{
+		if (tab[i][0] != '@' && tab[i][0] != 'f' && tab[i][0] != '\0')
+			break ; 
+		i++;
+	}
+	return (i);
+}
+
 char *ft_modify(int i, char **tab, char *flag)
 {
 	int j;
@@ -378,6 +390,9 @@ char *ft_modify(int i, char **tab, char *flag)
 
 	j = 0;
 	value = 0;
+//	printf("i == %d\n", i);
+//	printf("tab[i] == %s\n", tab[i]);
+//	printf("flag[j] == %c\n", flag[j]);
 //	printf("i = %d\n", i);
 //	printf("flag = %s\n", flag);
 	while (flag[j++])
@@ -400,13 +415,14 @@ char *ft_modify(int i, char **tab, char *flag)
 		if (value < ft_strlen(tab[i]))
 			tab[i][value - 1] = '\0';
 		else if (value > ft_strlen(tab[i]))
+		//	if (tab[i][0] != ' ')
 			tab[i] = (char *)join_a_free(replace_spaces(value, ft_spaces(value - ft_strlen(tab[i]),
 			tab[i])), "");
 	}
 	if (flag[1] == '*')
 	{
 		if (value > ft_strlen(tab[i]))
-			tab[i] = (char *)join_a_free(ft_spaces(value - ft_strlen(tab[i]) - 1, tab[i]), "");
+			tab[i] = (char *)join_a_free(ft_spaces(value - ft_strlen(tab[i]), tab[i]), "");
 	}
 //	printf("tab[i] = %s\n", tab[i]);
 	return (tab[i]);
@@ -488,6 +504,7 @@ char *replace_spaces(int value, char *str)
 	char *zero;
 
 	i = 0;
+//	printf("str = %s\n", str);
 	while (str[i] == ' ')
 	{
 		str[i] = '0';
@@ -495,13 +512,14 @@ char *replace_spaces(int value, char *str)
 	}
 	if (i == 0)
 	{
-		while (i + ft_strlen(str) < value)
+		while (i < value)
 		{
 			zero = ft_strjoin("0", "");
 			i++;
 		}
 		return (ft_strjoin(zero, str));
 	}
+//	printf("strfin %s\n", str);
 	return (str);
 }
 
@@ -529,15 +547,16 @@ char *ft_spaces(size_t value, char *param)
 	char *str;
 
 	i = 0;
+//	printf("param %s\n", param);
 	if (!(str = malloc(sizeof(char) * (value + 1))))
 		return (0);
-	while (i + ft_strlen(param) < value)
+	while (i < value)
 	{
 		str[i] = ' ';
 		i++;
 	}
 	str[i] = '\0';
-	return (str);
+	return (ft_strjoin(str, param));
 }
 
 int		ft_is_value(char c)
@@ -566,3 +585,4 @@ void ft_putstr(char *str)
 		}
 	}
 }
+
