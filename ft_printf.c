@@ -30,10 +30,10 @@ int	ft_printf(const char *format, ...)
 		while (i > 0 && ft_isdigit(format[j]) && check_conv(j, format))
 		j++;
 		tab[i] = (char *)extract_arg(j, args, format);
-	//	printf("tab[i]%s\n", tab[i]);
+	//	printf("1 - tab[i]%s\n", tab[i]);
 		if (format[j] != '%' || (format[j] == '%' && format[j + 1] == '%'))
 			i++;
-		if (format[j] == '%' && format[j + 1] == '*' && (format[j + 2] == 'c' || format[j + 2] == 's' ||
+		if (format[j] == '%' && (format[j + 1] == '*' || format[j + 1] == '.') && (format[j + 2] == 'c' || format[j + 2] == 's' ||
 			format[i + 2] == 'd' || format[i + 2] == 'i' || format[i + 2] == 'u' || format[i + 2] == 'p'
 			|| format[i + 2] == 'x' || format[i + 2] == 'X'))
 		{
@@ -48,7 +48,10 @@ int	ft_printf(const char *format, ...)
 	while (tab[i])
 	{
 		if (tab[i][0] == 'f' && (tab[i][1] == '0' || tab[i][1] == '.' || tab[i][1] == '*' || tab[i][1] == '-'))
-			tab[i] = ft_modify(j, tab, tab[i]);
+		{
+			j += find_arg(j, tab);
+			tab[j] = ft_modify(j, tab, tab[i]);
+		}
 		while (tab[i][x])
 		{
 			if (tab[i][x] != '@' && tab[i][0] != 'f')
@@ -62,8 +65,9 @@ int	ft_printf(const char *format, ...)
 			}
 			x++;
 			}
+		//	printf("2 - tab[i]%s\n", tab[i]);
+	//	printf("%d\n", i);
 		i++;
-	//	printf("tab[i]%s\n", tab[i]);
 		x = 0;
 	}
 	va_end(args);
