@@ -1,4 +1,3 @@
-
 #include "ft_printf.h"
 
 int	ft_isdigit(int c)
@@ -384,9 +383,10 @@ int find_arg(int i, char **tab)
 	while (tab[i])
 	{
 		if (tab[i][0] != '@' && tab[i][0] != 'f' && tab[i][0] != '\0')
-			break ; 
+			break ;
 		i++;
 	}
+//	printf("indice %d\n", i);
 	return (i);
 }
 
@@ -399,39 +399,56 @@ char *ft_modify(int i, char **tab, char *flag)
 	value = 0;
 //	printf("i == %d\n", i);
 //	printf("tab[i] == %s\n", tab[i]);
-//	printf("flag[j] == %c\n", flag[j]);
+//	printf("flag == %s\n", flag);
 //	printf("i = %d\n", i);
-//	printf("flag = %s\n", flag);
 	while (flag[j++])
-		if (ft_isdigit(flag[j]))
+		if (ft_isdigit(flag[j]) || flag[j] == '-')
 		{
 	//		printf("j = %zd\n", j);
 			value = ft_atoi(&flag[j]);
 			break ;
 		}
+//	printf("flag = %s\n", &flag[j]);
 //	while (tab[i][0] == 'f' || tab[i][0] == '@')
 //			i++;
 //	printf("i = %d\n", i);
-//	printf("value = %zu\n", value);
+//	printf("value = %d\n", value);
+	j = 0;
+//	printf("tab[ft_strlen(tab[i]) - 1] %d\n", ft_strlen(tab[i]) - 1);
 	if (flag[1] == '0')
-		tab[i] = replace_spaces(ft_spaces(value, tab[i]), tab[i]);
-	if (flag[1] == '-')
-		tab[i] = rev_flag(tab[i]);
+		tab[i] = replace_spaces(value, ft_spaces(value, tab[i]));
+//	if (flag[1] == '-')
+//		tab[i] = rev_flag(tab[i]);
 	if (flag[1] == '.')
 	{
-		if (value < ft_strlen(tab[i]))
-			tab[i][value - 1] = '\0';
-		else if (value > ft_strlen(tab[i]))
-		//	if (tab[i][0] != ' ')
-			tab[i] = (char *)join_a_free(replace_spaces(value, ft_spaces(value - ft_strlen(tab[i]),
-			tab[i])), "");
+		while (tab[i][j] && tab[i][j] != ' ' && tab[i][ft_strlen(tab[i]) - 1] == ' ')
+			j++;
+		if (j == 0)
+		{
+			if (value < ft_strlen(tab[i]))
+				tab[i][value] = '\0';
+			else if (value > ft_strlen(tab[i]))
+			//	if (tab[i][0] != ' ')
+				tab[i] = (char *)join_a_free(replace_spaces(value,
+				ft_spaces(value - ft_strlen(tab[i]), tab[i])), "");
+		}
+		else
+		{
+	//			printf("hey");
+			tab[i] = (char *)replace_spaces(value, tab[i]);
+		}
 	}
 	if (flag[1] == '*')
 	{
 		if (value > ft_strlen(tab[i]))
 			tab[i] = (char *)join_a_free(ft_spaces(value - ft_strlen(tab[i]), tab[i]), "");
+		if (value < 0)
+		{
+	//		printf("a");
+			tab[i] = (char *)join_a_free(ft_spaces(value + ft_strlen(tab[i]), tab[i]), "");
+		}
 	}
-//	printf("tab[i] = %s\n", tab[i]);
+//	printf("tab[i] ! = %s\n", tab[i]);
 	return (tab[i]);
 }
 
@@ -511,26 +528,29 @@ char *replace_spaces(int value, char *str)
 	char *zero;
 
 	i = 0;
-	zero = (char *)ft_strjoin("0", "");
-//	printf("str = %s\n", str);
+//	printf("str2 = %s\n", str);
 //	printf("value == %d\n", value);
 	if (!str)
 		return ((char *)ft_strjoin("", ""));
-	while (str[i] == ' ')
+	if (str[i] == ' ')
 	{
-		str[i] = '0';
-		i++;
-	}
-	if (i == 0)
-	{
-		while (i < value)
+		while (str[i] && str[i] == ' ')
 		{
-			zero = (char *)ft_strjoin(zero, "");
+			str[i] = '0';
 			i++;
 		}
-		return ((char *)ft_strjoin(zero, str));
 	}
-//	printf("strfin %s\n", str);
+	else
+	{
+//		printf("i = %d\n", i);
+		while (str[i] != ' ')
+			i++;
+		while (i < value && str[i])
+		{
+			str[i] = '0';
+			i++;
+		}
+	}
 	return (str);
 }
 
@@ -555,9 +575,16 @@ char *rev_flag(char *str)
 char *ft_spaces(int value, char *param)
 {
 	int i;
+	int boolean;
 	char *str;
 
 	i = 0;
+	boolean = 0;
+	if (value < 0)
+	{
+		value = -value;
+		boolean = 1;
+	}
 //	printf("value!%d\n", value);
 //	printf("param %s\n", param);
 	if (!(str = malloc(sizeof(char) * (value + 1))))
@@ -568,6 +595,9 @@ char *ft_spaces(int value, char *param)
 		i++;
 	}
 	str[i] = '\0';
+//	printf("str = %s\n", str);
+	if (boolean)
+		return ((char *)ft_strjoin(param, str));
 	return ((char *)ft_strjoin(str, param));
 }
 
@@ -597,4 +627,3 @@ void ft_putstr(char *str)
 		}
 	}
 }
-
