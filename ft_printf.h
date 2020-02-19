@@ -7,43 +7,36 @@
 # include <stdarg.h>
 # include <unistd.h>
 
-int	ft_printf(const char *format, ...);
-int		ft_format(const char *format);
-int	ft_isdigit(int c);
-int	ft_strlen(const char *s);
-const char	*ft_strjoin(const char *s1, const char *s2);
-char	**ft_order_params(size_t j, const char *params, const char *format);
-const void	*ft_memmove(const void *dst, const void *src, size_t len);
-const char		*ft_itoa(int n);
-const char		*ft_itoa_u(unsigned int n);
-int	ft_atoi(const char *str);
-size_t	ft_nb_params(const char *format);
-char	ft_type(const char *str, const char *format);
-size_t	ft_index(size_t j, const char *str, const char *format);
-char	*char_to_s(int x);
-char	*to_hex(char c, unsigned int n, char *base);
-char	*revstr(char *str);
-char *str_toupper(char *str);
-const char	*extract_arg(size_t i, va_list args, const char *format);
-char			**ft_split(char const *s, char c);
-void	*ft_calloc(size_t count, size_t size);
-char **ft_rewrite_format(const char *format);
-char *ft_replace_format(char **new_format, const char *format, char *n_format);
-int             ft_is_value(char c);
-const char **ft_fill_str(size_t nb_args, const char *format, va_list args);
-char *ft_precision(size_t i, const char *format, va_list args);
-char *ft_spacing(size_t i, const char *format, va_list args);
-char **ft_modify_strings(size_t nb_args, size_t i, size_t j, char **params);
-char *replace_spaces(char *str);
-char *ft_spaces(size_t value, char *param);
-size_t ft_find_arg(size_t j, size_t find_index, char **params);
-int check_conv(size_t i, const char *format);
-int ft_is_conv(char c);
-char *rev_flag(char *str);
-char *no_arg(char *str);
-char *ft_modify(int i, char **tab, char *flag);
+typedef struct	s_flag
+{
+		int		width;
+		int		precision;
+		int		rev;
+		int		zero;
+		int 	ret;
+}				t_flag;
+
+int			ft_printf(const char *format, ...);
+int 		ft_putstr_len(const char *str, t_flag help);
+int ft_putstr(const char *str);
 void ft_putchar(char c);
-void ft_putstr(char *str);
+char	*to_hex(char c, unsigned int n, char *base);
+int	ft_atoi(const char *str);
+const char		*ft_itoa_u(unsigned int n);
+const char		*ft_itoa(int n);
+const void	*ft_memmove(const void *dst, const void *src, size_t len);
 const char	*join_a_free(const char *s1, const char *s2);
+const char	*ft_strjoin(const char *s1, const char *s2);
+int	ft_strlen(const char *s);
+int	ft_isdigit(int c);
+void fill_struct_conv(t_flag *help, int i, const char *format, va_list args);
+void fill_struct(t_flag *help, int i, const char *format, va_list args);
+int find_index(int i, const char *str);
+int is_conv(const char c);
+int is_flag(const char c);
+int		find_percent(const char *str);
+void		init_struct(t_flag *help);
+char *str_toupper(char *str);
+char	*revstr(char *str);
 
 #endif
