@@ -47,9 +47,10 @@ int		find_percent(const char *str)
 	int i;
 
 	i = 0;
-	if (str[i] == '%' && str[i + 1] != '%')
-		return (1);
-	return (0);
+	while (str[i] == '%')
+		i++;
+//	printf("i = %d\n", i);
+	return (i);
 }
 
 int is_flag(const char c)
@@ -84,9 +85,10 @@ void fill_struct(t_flag *help, int i, const char *format, va_list args)
 
 	j = 0;
 	j++;
-	printf("&format[j] rev %c\n", format[j]);
-	while (j < ft_strlen(format) && (is_flag(format[j]) || is_conv(format[j])))
+//	printf("&format[j] rev %c\n", format[j]);
+	while (is_flag(format[j]) || is_conv(format[j]))
 	{
+//		printf("j = %d\n", j);
 		if (format[j] == '0')
 			help->zero = 1;
 		if (format[j] == '-')
@@ -94,16 +96,19 @@ void fill_struct(t_flag *help, int i, const char *format, va_list args)
 			help->zero = 0;
 			help->rev = 1;
 		}
-		if (format[j] == '*')
+		if (format[j] == '*' || ft_isdigit(format[j]))
 		{
-			help->width = va_arg(args, int);
-			j++;
+			if (format[j] != '*')
+				help->width = ft_atoi(&format[j]);
+			else
+				help->width = va_arg(args, int);
+				j++;
 			if (ft_isdigit(format[j]) || format[j] == '-')
 			{
 				if (ft_isdigit(format[j]) || format[j] == '-')
 				{
 					help->width = ft_atoi(&format[j]);
-					printf("&format[j] rev %s\n", &format[j]);
+//					printf("&format[j] rev %s\n", &format[j]);
 					while (ft_isdigit(format[j]) || format[j] == '-')
 					j++;
 				}
@@ -115,7 +120,7 @@ void fill_struct(t_flag *help, int i, const char *format, va_list args)
 			while (ft_isdigit(format[j]) || format[j] == '-')
 			{
 				help->precision = ft_atoi(&format[j]);
-				printf("&format[j] prec %s\n", &format[j]);
+//				printf("&format[j] prec %s\n", &format[j]);
 				while (ft_isdigit(format[j]) || format[j] == '-')
 					j++;
 			}
@@ -123,49 +128,55 @@ void fill_struct(t_flag *help, int i, const char *format, va_list args)
 				help->precision = va_arg(args, int);
 		}
 		if (is_conv(format[j]))
-			fill_struct_conv(&help, j, &format[j], args);
+			fill_struct_conv(help, format[j], args);
 		j++;
 	}
-	printf("width %d\n", help->width);
-	printf("prec %d\n", help->precision);
-	printf("rev %d\n", help->rev);
-	printf("zero %d\n", help->zero);
-	printf("ret %d\n", help->ret);
+//	printf("width %d\n", help->width);
+//	printf("prec %d\n", help->precision);
+//	printf("rev %d\n", help->rev);
+//	printf("zero %d\n", help->zero);
+//	printf("ret %d\n", help->ret);
 }
 
-void fill_struct_conv(t_flag *help, int i, const char *format, va_list args)
+void fill_struct_conv(t_flag *help, char c, va_list args)
 {
 	int type;
 
 	type = 0;
-	if (format[0] == 's')
-		help->ret += ft_putstr_len(va_arg(args, char *), *help);
-	if (format[0] == 'd' || format[i] == 'i' || format[i] == 'c')
+	if (help->precision < 0 || help->width < 0)
 	{
-		if (format[0] != 'c')
+		help->precision = (help->precision < 0) ? -help->precision : help->precision;
+		help->width = (help->width < 0) ? -help->width : help->width;
+		help->rev = 1;
+	}
+	if (c == 's')
+		help->ret += ft_putstr_len(va_arg(args, char *), help);
+	if (c == 'd' || c == 'i' || c == 'c')
+	{
+		if (c != 'c')
 			help->ret += ft_putstr_len(ft_itoa(va_arg(args, int)),
-			*help);
+			help);
 		else
 		{
 			ft_putchar((unsigned char)va_arg(args, int));
 			help->ret++;
 		}
 	}
-	if (format[0] == 'u')
+	if (c == 'u')
 	{
 		if ((type = va_arg(args, int)) > 0)
-			help->ret += ft_putstr_len(ft_itoa(type), *help);
+			help->ret += ft_putstr_len(ft_itoa(type), help);
 		else
-			help->ret += ft_putstr_len(ft_itoa_u(type), *help);
+			help->ret += ft_putstr_len(ft_itoa_u(type), help);
 	}
-	if (format[0] == 'x' || format[i] == 'X')
-		help->ret += ft_putstr_len(to_hex(format[i],
-		va_arg(args, unsigned int), "0123456789abcdef"), *help);
-	if (format[0] == 'p')
+	if (c == 'x' || c == 'X')
+		help->ret += ft_putstr_len(to_hex(c,
+		va_arg(args, unsigned int), "0123456789abcdef"), help);
+	if (c == 'p')
 	{
-		help->ret += ft_putstr_len("0x", *help);
-		help->ret += ft_putstr_len(to_hex(format[i],
-		va_arg(args, unsigned int), "0123456789abcdef"), *help);
+		help->ret += ft_putstr_len("0x", help);
+		help->ret += ft_putstr_len(to_hex(c,
+		va_arg(args, unsigned int), "0123456789abcdef"), help);
 	}
 }
 
@@ -435,7 +446,7 @@ void ft_putchar(char c)
 
 int ft_putstr(const char *str)
 {
-	size_t i;
+	int i;
 
 	i = 0;
 	if (str)
@@ -449,48 +460,61 @@ int ft_putstr(const char *str)
 	return (i);
 }
 
-int ft_putstr_len(const char *str, t_flag help)
+int ft_putstr_len(const char *str, t_flag *help)
 {
-	size_t j;
-	size_t k;
-	size_t tmp;
-	size_t len;
+	int j;
+	int k;
+	int tmp;
+	int len;
 
 	j = 0;
 	k = 0;
 	if (str)
 	{
-		tmp = help.width;
-		help.width = help.width - ft_strlen(str) - help.precision;
+		tmp = help->width;
+		if (help->width > help->precision)
+			help->width = help->width - ft_strlen(str) - help->precision;
+		else
+		{
+			help->width = help->precision - ft_strlen(str);
+			help->zero = 1;
+		}
 		if (len < 0)
 			len = 0;
-		if (help.rev == 0)
+		if (help->rev == 0)
 		{
-			while (j < help.width)
+			while (j < help->width)
 			{
-				if (help.zero == 1)
+				if (help->zero == 1)
 					ft_putchar('0');
 				else
 					ft_putchar(' ');
 				j++;
 			}
-			while (j < tmp)
+			while (str[k])
 			{
 				ft_putchar(str[k]);
 				k++;
 			}
 		}
 		else
-			while (str[k] && k < tmp)
+		{
+			while (str[k])
 			{
 				ft_putchar(str[k]);
 				k++;
 			}
-			while (j + k < tmp)
+			while (k < help->precision)
+			{
+				ft_putchar('0');
+				k++;
+			}
+			while (k < help->width)
 			{
 				ft_putchar(' ');
-				j++;
+				k++;
 			}
+		}
 	}
 	return (j + k);
 }
