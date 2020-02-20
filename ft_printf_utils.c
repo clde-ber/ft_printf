@@ -85,8 +85,8 @@ void fill_struct(t_flag *help, int i, const char *format, va_list args)
 
 	j = 0;
 	j++;
-//	printf("&format[j] rev %c\n", format[j]);
-	while (is_flag(format[j]) || is_conv(format[j]))
+	printf("&format[j] rev %c\n", format[j]);
+	while (format[j] && (is_flag(format[j]) || is_conv(format[j])))
 	{
 //		printf("j = %d\n", j);
 		if (format[j] == '0')
@@ -464,14 +464,11 @@ int ft_putstr_len(const char *str, t_flag *help)
 {
 	int j;
 	int k;
-	int tmp;
-	int len;
 
 	j = 0;
 	k = 0;
-	if (str)
+	if (help->width != 0 || help->precision != 0)
 	{
-		tmp = help->width;
 		if (help->width > help->precision)
 			help->width = help->width - ft_strlen(str) - help->precision;
 		else
@@ -479,41 +476,39 @@ int ft_putstr_len(const char *str, t_flag *help)
 			help->width = help->precision - ft_strlen(str);
 			help->zero = 1;
 		}
-		if (len < 0)
-			len = 0;
-		if (help->rev == 0)
+	}
+	if (help->rev == 0)
+	{
+		while (j < help->width)
 		{
-			while (j < help->width)
-			{
-				if (help->zero == 1)
-					ft_putchar('0');
-				else
-					ft_putchar(' ');
-				j++;
-			}
-			while (str[k])
-			{
-				ft_putchar(str[k]);
-				k++;
-			}
-		}
-		else
-		{
-			while (str[k])
-			{
-				ft_putchar(str[k]);
-				k++;
-			}
-			while (k < help->precision)
-			{
+			if (help->zero == 1)
 				ft_putchar('0');
-				k++;
-			}
-			while (k < help->width)
-			{
+			else
 				ft_putchar(' ');
-				k++;
-			}
+			j++;
+		}
+		while (str[k])
+		{
+			ft_putchar(str[k]);
+			k++;
+		}
+	}
+	else
+	{
+		while (str[k])
+		{
+			ft_putchar(str[k]);
+			k++;
+		}
+		while (k < help->precision)
+		{
+			ft_putchar('0');
+			k++;
+		}
+		while (k < help->width)
+		{
+			ft_putchar(' ');
+			k++;
 		}
 	}
 	return (j + k);
