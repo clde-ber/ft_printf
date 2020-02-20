@@ -17,7 +17,7 @@ typedef struct	s_flag
 }				t_flag;
 
 int			ft_printf(const char *format, ...);
-int 		ft_putstr_len(const char *str, t_flag help);
+int 		ft_putstr_len(const char *str, t_flag *help);
 int ft_putstr(const char *str);
 void ft_putchar(char c);
 char	*to_hex(char c, unsigned int n, char *base);
@@ -29,7 +29,7 @@ const char	*join_a_free(const char *s1, const char *s2);
 const char	*ft_strjoin(const char *s1, const char *s2);
 int	ft_strlen(const char *s);
 int	ft_isdigit(int c);
-void fill_struct_conv(t_flag *help, int i, const char *format, va_list args);
+void fill_struct_conv(t_flag *help, char c, va_list args);
 void fill_struct(t_flag *help, int i, const char *format, va_list args);
 int find_index(int i, const char *str);
 int is_conv(const char c);
