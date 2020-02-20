@@ -13,7 +13,7 @@ int	ft_printf(const char *format, ...)
 	va_start(args, format);
 	while (i < ft_strlen(format))
 	{
-		if (i == ft_strlen(format) - 1)
+		if (i >= ft_strlen(format))
 			break ;
 //		i += find_percent(&format[i]);
 	//	printf("findpercent %d\n", find_percent(&format[i]));
@@ -26,7 +26,7 @@ int	ft_printf(const char *format, ...)
 		if (format[i] && find_percent(&format[i]) == 1)
 		{
 			fill_struct(&help, i, &format[i], args);
-			i = find_index(++i, format);
+			i += find_index(i + 1, format);
 		}
 	}
 	va_end(args);
