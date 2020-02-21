@@ -4,31 +4,38 @@ int	ft_printf(const char *format, ...)
 {
 	int i;
 	int ret;
+	int j;
 	va_list args;
 	t_flag help;
 
 	i = 0;
+	j = 0;
 	ret = 0;
 	init_struct(&help);
 	va_start(args, format);
-	while (i < ft_strlen(format))
+	while (find_index(i, format) != -1)
 	{
-		if (i >= ft_strlen(format))
-			break ;
-//		i += find_percent(&format[i]);
-	//	printf("findpercent %d\n", find_percent(&format[i]));
-		while (format[i] && (find_percent(&format[i]) > 1 || !find_percent(&format[i])))
+	//	printf("i = %d\n", i);
+		if (format[i] == '%' && format[i + 1] != '%')
 		{
-			ft_putchar(format[i]);
-			help.ret++;
-			i = (find_percent(&format[i])) ? i + find_percent(&format[i]) : ++i;
+			fill_struct(&help, &format[i], args);
+			i = find_index(++i, format);
+			init_all_except_ret(&help);
 		}
-		if (format[i] && find_percent(&format[i]) == 1)
+		else
 		{
-			fill_struct(&help, i, &format[i], args);
-			i += find_index(i + 1, format);
+			if (format[i] == '%' && format[i + 1] == '%')
+			{
+				i++;
+				ft_putchar(format[i], &help);
+			}
+			if (format[i] != '%')
+			{
+				ft_putchar(format[i], &help);
+			}
+			i++;
 		}
 	}
 	va_end(args);
-	return (help.ret);
+	return (help.ret + 1);
 }
