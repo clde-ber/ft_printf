@@ -508,15 +508,15 @@ void ft_putstr_len(const char *str, t_flag *help)
 	l = 0;
 	if (help->set_width == 0)
 		help->width = 0;
-	if (help->set_prec == 0)
+	else if (help->set_prec == 0)
 		help->precision = ft_strlen(str);
 	if (help->width > ft_strlen(str))
-		help->width = help->width - ft_strlen(str) + 1;
-	else
+		help->width = help->width - ft_strlen(str);
+	else if (help->width < ft_strlen(str))
 		help->width = ft_strlen(str);
-	if (help->width > help->precision)
+	if (help->width > help->precision && help->set_prec == 1)
 		help->width = help->width - help->precision;
-//	printf("rev ? %d\n", help->rev);
+//	printf("width ? %d\n", help->width);
 	if (help->rev == 0)
 	{
 		while (j < help->width)
@@ -532,7 +532,7 @@ void ft_putstr_len(const char *str, t_flag *help)
 			ft_putchar('0', help);
 			l++;
 		}
-		while ((str[k] && help->set_prec == 0) || (str[k] && k + l < help->precision & &help->set_prec == 1))
+		while ((str[k] && help->set_prec == 0) || (str[k] && k + l < help->precision && help->set_prec == 1))
 		{
 			ft_putchar(str[k], help);
 			k++;
@@ -540,10 +540,11 @@ void ft_putstr_len(const char *str, t_flag *help)
 	}
 	else
 	{
-		if ((str[k] == '\0' && k < help->precision && help->set_prec == 1) || (str[k] == '\0' && help->set_prec
+		if ((str[j] == '\0' && j < help->precision && help->set_prec == 1) || (str[j] == '\0' && help->set_prec
 		== 0))
-			ft_putchar('\0', help);
-			k++;
+		{	ft_putchar('\0', help);
+			l++;
+		}
 		while ((str[k] && k < help->precision && help->set_prec == 1) || (str[k] && help->set_prec == 0))
 		{
 			ft_putchar(str[k], help);
@@ -554,7 +555,7 @@ void ft_putstr_len(const char *str, t_flag *help)
 			ft_putchar('0', help);
 			j++;
 		}
-		while (l + j < help->width && help->set_width == 1)
+		while (l < help->width && help->set_width == 1)
 		{
 		//	printf("k = %d\n", k);
 			ft_putchar(' ', help);
