@@ -11,16 +11,15 @@ typedef struct	s_flag
 {
 		int		width;
 		int		precision;
-		int		set_width;
-		int		set_prec;
 		int		rev;
 		int		zero;
 		int 	ret;
 }				t_flag;
 
 int			ft_printf(const char *format, ...);
-void 		ft_putstr_len(const char *str, t_flag *help);
-void ft_putchar(char c, t_flag *help);
+int 		ft_putstr_len(const char *str, t_flag *help);
+int ft_putstr(const char *str);
+void ft_putchar(char c);
 char	*to_hex(char c, unsigned int n, char *base);
 int	ft_atoi(const char *str);
 const char		*ft_itoa_u(unsigned int n);
@@ -40,6 +39,5 @@ void		init_struct(t_flag *help);
 void		init_all_except_ret(t_flag *help);
 char *str_toupper(char *str);
 char	*revstr(char *str);
-char *char_to_s(char c);
 
 #endif
