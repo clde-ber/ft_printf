@@ -3,14 +3,10 @@
 int	ft_printf(const char *format, ...)
 {
 	int i;
-	int ret;
-	int j;
 	va_list args;
 	t_flag help;
 
 	i = 0;
-	j = 0;
-	ret = 0;
 	init_struct(&help);
 	va_start(args, format);
 	while (find_index(i, format) != -1)
@@ -27,11 +23,11 @@ int	ft_printf(const char *format, ...)
 			if (format[i] == '%' && format[i + 1] == '%')
 			{
 				i++;
-				ft_putchar(format[i], &help);
+				ft_putchar(format[i]);
 			}
 			if (format[i] != '%')
 			{
-				ft_putchar(format[i], &help);
+				ft_putchar(format[i]);
 			}
 			i++;
 		}
