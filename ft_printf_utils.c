@@ -161,7 +161,7 @@ void fill_struct(t_flag *help, const char *format, va_list args)
 				j++;
 		}
 	//	printf("format[j]! %c\n", format[j]);
-		if (is_conv(format[j]) || (is_flag(format[j])))
+		if (is_conv(format[j]))
 			fill_struct_conv(help, format[j], args);
 		j++;
 	}
@@ -574,7 +574,7 @@ int ft_putstr_len(const char *str, t_flag *help)
 		help->precision = help->precision - ft_strlen(str) - help->width;
 	if (help->rev == 0)
 	{
-		while (j < help->width + help->precision)
+		while (j < help->width)
 		{
 			if (help->zero == 1)
 				write(1, "0", sizeof(char));
@@ -597,7 +597,7 @@ int ft_putstr_len(const char *str, t_flag *help)
 		}
 		while (j + 1 < help->precision && help->set_prec)
 		{
-			write(1, "0", sizeof(char));
+			write(1, " ", sizeof(char));
 			j++;
 		}
 		while (j < help->width + help->precision)
