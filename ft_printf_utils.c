@@ -524,12 +524,10 @@ int ft_putchar(char c, t_flag *help)
 			j++;
 		}
 		write(1, &c, sizeof(char));
-		j++;
 	}
 	else
 	{
 		write(1, &c, sizeof(char));
-		j++;
 		while (j + 1 < help->precision && help->set_prec)
 		{
 			write(1, "0", sizeof(char));
@@ -541,7 +539,7 @@ int ft_putchar(char c, t_flag *help)
 			j++;
 		}
 	}
-	return (j);
+	return (j + 1);
 }
 
 int ft_putstr(const char *str)
