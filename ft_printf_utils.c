@@ -4,6 +4,7 @@ void		init_struct(t_flag *help)
 {
 	help->width = 0;
 	help->precision = 0;
+	help->set_prec = 0;
 	help->rev = 0;
 	help->zero = 0;
 	help->ret = 0;
@@ -13,6 +14,7 @@ void		init_all_except_ret(t_flag *help)
 {
 	help->width = 0;
 	help->precision = 0;
+	help->set_prec = 0;
 	help->rev = 0;
 	help->zero = 0;
 }
@@ -101,19 +103,32 @@ void fill_struct(t_flag *help, const char *format, va_list args)
 	{
 //		printf("j = %d\n", j);
 		if (format[j] == '0')
+		{
 			help->zero = 1;
+			j++;
+		}
+//		printf("format[jjjjj] %c\n", format[j]);
 		if (format[j] == '-')
 		{
 			help->zero = 0;
 			help->rev = 1;
+			j++;
 		}
 		if (format[j] == '*' || ft_isdigit(format[j]))
 		{
 			if (format[j] != '*')
+			{
 				help->width = ft_atoi(&format[j]);
+		//		printf("help-w = %d\n", help->width);
+				while (ft_isdigit(format[j]))
+					j++;
+			}
 			else
-				help->width = va_arg(args, int);
-			j++;
+			{
+				if (!(help->width = va_arg(args, int)))
+					help->width = 0;
+				j++;
+			}
 			if (ft_isdigit(format[j]) || format[j] == '-')
 			{
 				if (ft_isdigit(format[j]) || format[j] == '-')
@@ -127,18 +142,26 @@ void fill_struct(t_flag *help, const char *format, va_list args)
 		}
 		if (format[j] == '.')
 		{
-			j++;
-			while (ft_isdigit(format[j]) || format[j] == '-')
+			if (format[j + 1] == '*' || ft_isdigit(format[j + 1]))
 			{
-				help->precision = ft_atoi(&format[j]);
-//				printf("&format[j] prec %s\n", &format[j]);
+				help->set_prec = 1;
+				j++;
 				while (ft_isdigit(format[j]) || format[j] == '-')
-					j++;
+				{
+					help->precision = ft_atoi(&format[j]);
+//					printf("&format[j] prec %s\n", &format[j]);
+					while (ft_isdigit(format[j]) || format[j] == '-')
+						j++;
+				}
+				if (format[j] == '*')
+					if (!(help->precision = va_arg(args, int)))
+						help->precision = 0;
 			}
-			if (format[j] == '*')
-				help->precision = va_arg(args, int);
+			else
+				j++;
 		}
-		if (is_conv(format[j]))
+	//	printf("format[j]! %c\n", format[j]);
+		if (is_conv(format[j]) || (is_flag(format[j])))
 			fill_struct_conv(help, format[j], args);
 		j++;
 	}
@@ -152,42 +175,71 @@ void fill_struct(t_flag *help, const char *format, va_list args)
 void fill_struct_conv(t_flag *help, char c, va_list args)
 {
 	int type;
+	int i;
+	unsigned int x;
+	void *res;
 
 	type = 0;
+	res = 0;
+	x = 0;
+	i = 0;
 	if (help->precision < 0 || help->width < 0)
 	{
 		help->precision = (help->precision < 0) ? -help->precision : help->precision;
 		help->width = (help->width < 0) ? -help->width : help->width;
 		help->rev = 1;
 	}
+	if ((help->precision != 0 && help->set_prec == 1) || help->set_prec == 0)
+	{
 	if (c == 's')
-		help->ret += ft_putstr_len(va_arg(args, char *), help);
-	if (c == 'd' || c == 'i' || c == 'c')
+	{
+		if (!(res = va_arg(args, char *)))
+			help->ret += ft_putstr_len("(null)", help);
+		else
+			help->ret += ft_putstr_len(res, help);
+	}
+	else if (c == 'd' || c == 'i' || c == 'c')
 	{
 		if (c != 'c')
-			help->ret += ft_putstr_len(ft_itoa(va_arg(args, int)),
-			help);
+		{
+			type = va_arg(args, int);
+			help->ret += ft_putstr_len(ft_itoa(type), help);
+		}
 		else
 		{
-			ft_putchar((unsigned char)va_arg(args, int));
-			help->ret++;
+			i = va_arg(args, int);
+			help->ret += ft_putchar(i, help);
 		}
 	}
-	if (c == 'u')
+	else if (c == 'u')
 	{
-		if ((type = va_arg(args, int)) > 0)
+		type = va_arg(args, int);
+		if (type > 0)
 			help->ret += ft_putstr_len(ft_itoa(type), help);
 		else
 			help->ret += ft_putstr_len(ft_itoa_u(type), help);
 	}
-	if (c == 'x' || c == 'X')
-		help->ret += ft_putstr_len(to_hex(c,
-		va_arg(args, unsigned int), "0123456789abcdef"), help);
-	if (c == 'p')
+	else if (c == 'x' || c == 'X')
 	{
-		help->ret += ft_putstr_len("0x", help);
-		help->ret += ft_putstr_len(to_hex(c,
-		va_arg(args, unsigned int), "0123456789abcdef"), help);
+		x = va_arg(args, unsigned int);
+		if (x == 0)
+		{
+			help->ret += ft_putchar('0', help);
+		}
+		else
+			help->ret += ft_putstr_len(to_hex(c, x, "0123456789abcdef"), help);
+	}
+	else if (c == 'p')
+	{
+		x = va_arg(args, unsigned int);
+		if (x == 0)
+		{
+			ft_putchar('0', help);
+			help->ret++;
+		}
+		else
+			help->ret += ft_putstr_len(ft_strjoin("0x", to_hex(c, x, "0123456789abcdef")), help) + 2;
+	}
 	}
 }
 
@@ -450,9 +502,46 @@ char	*to_hex(char c, unsigned int n, char *base)
 	return (str);
 }
 
-void ft_putchar(char c)
+int ft_putchar(char c, t_flag *help)
 {
-	write(1, &c, sizeof(char));
+	int j;
+
+	j = 0;
+	if (help->precision > help->width)
+		help->zero = 1;
+	if (help->width > help->precision)
+		help->width = help->width - help->precision - 1;
+	if (help->width < 1 && help->precision > 1)
+		help->precision = help->precision - help->width - 1;
+	if (help->rev == 0)
+	{
+		while (j < help->width + help->precision)
+		{
+			if (help->zero == 1)
+				write(1, "0", sizeof(char));
+			else
+				write(1, " ", sizeof(char));
+			j++;
+		}
+		write(1, &c, sizeof(char));
+		j++;
+	}
+	else
+	{
+		write(1, &c, sizeof(char));
+		j++;
+		while (j + 1 < help->precision && help->set_prec)
+		{
+			write(1, "0", sizeof(char));
+			j++;
+		}
+		while (j < help->width + help->precision)
+		{
+			write(1, " ", sizeof(char));
+			j++;
+		}
+	}
+	return (j);
 }
 
 int ft_putstr(const char *str)
@@ -464,7 +553,7 @@ int ft_putstr(const char *str)
 	{
 		while (str[i])
 		{
-			ft_putchar(str[i]);
+			write(1, &str[i], sizeof(char));
 			i++;
 		}
 	}
@@ -478,29 +567,26 @@ int ft_putstr_len(const char *str, t_flag *help)
 
 	j = 0;
 	k = 0;
-	if (help->width != 0 || help->precision != 0)
-	{
-		if (help->width > help->precision)
-			help->width = help->width - ft_strlen(str) - help->precision;
-		else
-		{
-			help->width = help->precision - ft_strlen(str);
-			help->zero = 1;
-		}
-	}
+//	printf("helpW %d\n", help->width);
+	if (help->precision > help->width)
+		help->zero = 1;
+	if (help->width > help->precision)
+		help->width = help->width - ft_strlen(str) - help->precision;
+	if (help->width < ft_strlen(str) && help->precision > ft_strlen(str))
+		help->precision = help->precision - ft_strlen(str) - help->width;
 	if (help->rev == 0)
 	{
-		while (j < help->width)
+		while (j < help->width + help->precision)
 		{
 			if (help->zero == 1)
-				ft_putchar('0');
+				write(1, "0", sizeof(char));
 			else
-				ft_putchar(' ');
+				write(1, " ", sizeof(char));
 			j++;
 		}
 		while (str[k])
 		{
-			ft_putchar(str[k]);
+			write(1, &str[k], sizeof(char));
 			k++;
 		}
 	}
@@ -508,18 +594,18 @@ int ft_putstr_len(const char *str, t_flag *help)
 	{
 		while (str[k])
 		{
-			ft_putchar(str[k]);
+			write(1, &str[k], sizeof(char));
 			k++;
 		}
-		while (k < help->precision)
+		while (j + 1 < help->precision && help->set_prec)
 		{
-			ft_putchar('0');
-			k++;
+			write(1, "0", sizeof(char));
+			j++;
 		}
-		while (k < help->width)
+		while (j < help->width + help->precision)
 		{
-			ft_putchar(' ');
-			k++;
+			write(1, " ", sizeof(char));
+			j++;
 		}
 	}
 	return (j + k);
