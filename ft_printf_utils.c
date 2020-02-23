@@ -567,21 +567,13 @@ int ft_putstr_len(const char *str, t_flag *help)
 	k = 0;
 //	printf("helpW %d\n", help->width);
 	if (help->precision > help->width)
-		help->zero = 1;
-	if (help->precision > help->width)
 	{
+		help->zero = 1;
 		help->precision = ft_strlen(str);
 		help->width = 0;
 	}
 	else
-	{
-		if (help->width > help->precision)
-			help->width = help->width - ft_strlen(str) - help->precision;
-		else
-			help->width = 0;
-		if (help->width < ft_strlen(str) && help->precision > ft_strlen(str))
-			help->precision = help->precision - ft_strlen(str) - help->width;
-	}
+		help->width = help->width - ft_strlen(str) - help->precision;
 	if (help->rev == 0)
 	{
 		while (j < help->width)
@@ -605,7 +597,7 @@ int ft_putstr_len(const char *str, t_flag *help)
 			write(1, &str[k], sizeof(char));
 			k++;
 		}
-		while (j + 1 < help->precision && help->set_prec)
+		while (j + k < help->precision && help->set_prec)
 		{
 			write(1, " ", sizeof(char));
 			j++;
