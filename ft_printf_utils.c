@@ -575,7 +575,7 @@ int ft_putstr_len(const char *str, t_flag *help)
 	help->width = help->width - ft_strlen(str) - help->precision;
 	if (help->rev == 0)
 	{
-		while (j < help->width)
+		while (j < help->width + help->precision)
 		{
 			if (help->zero == 1)
 				write(1, "0", sizeof(char));
