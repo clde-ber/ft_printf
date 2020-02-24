@@ -577,6 +577,11 @@ int ft_putstr_len(const char *str, t_flag *help)
 		help->zero = 0;
 	if (help->precision && help->width == 0)
 		help->zero = 1;
+	if (str[i] == '-')
+	{
+		write(1, "-", sizeof(char));
+		k++;
+	}
 	if (help->rev == 0)
 	{
 		while ((j < help->width - ft_strlen(str) && help->set_prec == 0) || (j < help->width -
