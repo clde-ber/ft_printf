@@ -102,16 +102,16 @@ void fill_struct(t_flag *help, const char *format, va_list args)
 	while (format[j] && (is_flag(format[j]) || is_conv(format[j])))
 	{
 //		printf("j = %d\n", j);
-		if (format[j] == '0')
+		while (format[j] == '0' || format[j] == '-')
 		{
-			help->zero = 1;
-			j++;
-		}
+			if (format[j] == '0')
+				help->zero = 1;
 //		printf("format[jjjjj] %c\n", format[j]);
-		if (format[j] == '-')
-		{
-			help->zero = 0;
-			help->rev = 1;
+			if (format[j] == '-')
+			{
+				help->zero = 0;
+				help->rev = 1;
+			}
 			j++;
 		}
 		if (format[j] == '*' || ft_isdigit(format[j]))
@@ -177,20 +177,14 @@ void fill_struct_conv(t_flag *help, char c, va_list args)
 	int type;
 	int i;
 	unsigned int x;
+	unsigned long long l;
 	void *res;
 
 	type = 0;
 	res = 0;
 	x = 0;
 	i = 0;
-	if (help->precision < 0 || help->width < 0)
-	{
-		help->precision = (help->precision < 0) ? -help->precision : help->precision;
-		help->width = (help->width < 0) ? -help->width : help->width;
-		help->rev = 1;
-	}
-	if ((help->precision != 0 && help->set_prec == 1) || help->set_prec == 0)
-	{
+	l = 0;
 	if (c == 's')
 	{
 		if (!(res = va_arg(args, char *)))
@@ -231,15 +225,16 @@ void fill_struct_conv(t_flag *help, char c, va_list args)
 	}
 	else if (c == 'p')
 	{
-		x = va_arg(args, unsigned int);
-		if (x == 0)
+		l = (unsigned long long)va_arg(args, void *);
+		if (l == 0)
 		{
 			ft_putchar('0', help);
+			write(1, "x", sizeof(char));
 			help->ret++;
 		}
 		else
-			help->ret += ft_putstr_len(ft_strjoin("0x", to_hex(c, x, "0123456789abcdef")), help) + 2;
-	}
+			help->ret += ft_putstr_len(ft_strjoin("0x", to_hex(c, l, "0123456789abcdef")),
+			help);
 	}
 }
 
@@ -472,11 +467,11 @@ int	ft_atoi(const char *str)
 	return (res);
 }
 
-char	*to_hex(char c, unsigned int n, char *base)
+char	*to_hex(char c, unsigned long long n, char *base)
 {
 	int i;
 	char *str;
-	unsigned int k;
+	unsigned long long k;
 
 	k = n;
 	i = 0;
@@ -560,22 +555,32 @@ int ft_putstr(const char *str)
 
 int ft_putstr_len(const char *str, t_flag *help)
 {
+	int i;
 	int j;
 	int k;
 
+	i = 0;
 	j = 0;
 	k = 0;
-//	printf("helpW %d\n", help->width);
-	if (help->precision > help->width)
+	if (help->precision < 0)
 	{
-		help->zero = 1;
-		help->precision = ft_strlen(str);
-		help->width = 0;
+		help->precision = -1;
+		help->rev = 1;
+		help->set_prec = 1;
 	}
-	help->width = help->width - ft_strlen(str) - help->precision;
+	if (help->width < 0)
+	{
+		help->width = -help->width;
+		help->rev = 1;
+	}
+	if (help->precision >= 0 && help->set_prec)
+		help->zero = 0;
+	if (help->precision && help->width == 0)
+		help->zero = 1;
 	if (help->rev == 0)
 	{
-		while (j < help->width + help->precision)
+		while ((j < help->width - ft_strlen(str) && help->set_prec == 0) || (j < help->width -
+		help->precision && help->precision))
 		{
 			if (help->zero == 1)
 				write(1, "0", sizeof(char));
@@ -583,7 +588,13 @@ int ft_putstr_len(const char *str, t_flag *help)
 				write(1, " ", sizeof(char));
 			j++;
 		}
-		while (str[k])
+		while (i < help->precision - ft_strlen(str))
+		{
+			write(1, "0", sizeof(char));
+			i++;
+		}
+		while ((str[k] && k < help->precision && help->set_prec && help->precision != -1)
+		|| (str[k] && (help->set_prec == 0 || (help->set_prec == 1 && help->precision == -1))))
 		{
 			write(1, &str[k], sizeof(char));
 			k++;
@@ -591,21 +602,22 @@ int ft_putstr_len(const char *str, t_flag *help)
 	}
 	else
 	{
-		while (str[k])
+		while ((str[k] && k < help->precision && help->set_prec && help->precision != -1)
+		|| (str[k] && (help->set_prec == 0 || (help->set_prec == 1 && help->precision == -1))))
 		{
 			write(1, &str[k], sizeof(char));
 			k++;
 		}
-		while (j + k < help->precision && help->set_prec)
+		while (i < help->precision - ft_strlen(str))
 		{
 			write(1, " ", sizeof(char));
-			j++;
+			i++;
 		}
-		while (j < help->width + help->precision)
+		while (j + k + i < help->width)
 		{
 			write(1, " ", sizeof(char));
 			j++;
 		}
 	}
-	return (j + k);
+	return (j + k + i);
 }
