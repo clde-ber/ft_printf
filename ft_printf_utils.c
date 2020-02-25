@@ -164,6 +164,12 @@ void fill_struct(t_flag *help, const char *format, va_list args)
 		if (is_conv(format[j]))
 			fill_struct_conv(help, format[j], args);
 		j++;
+		while (is_flag(format[j]))
+		{
+			help->ret++;
+			write(1, &format[j], sizeof(char));
+			j++;
+		}
 	}
 //	printf("width %d\n", help->width);
 //	printf("prec %d\n", help->precision);
@@ -227,11 +233,7 @@ void fill_struct_conv(t_flag *help, char c, va_list args)
 	{
 		l = (unsigned long long)va_arg(args, void *);
 		if (l == 0)
-		{
-			ft_putchar('0', help);
-			write(1, "x", sizeof(char));
-			help->ret++;
-		}
+			help->ret += ft_putstr_len("0x", help);
 		else
 			help->ret += ft_putstr_len(ft_strjoin("0x", to_hex(c, l, "0123456789abcdef")),
 			help);
