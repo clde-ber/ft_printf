@@ -228,7 +228,7 @@ void fill_struct_conv(t_flag *help, char c, va_list args)
 		x = va_arg(args, unsigned int);
 		if (x == 0)
 		{
-			help->ret += ft_putchar('\0', help);
+			help->ret += ft_putchar('0', help);
 		}
 		else
 			help->ret += ft_putstr_len(to_hex(c, x, "0123456789abcdef"), help);
