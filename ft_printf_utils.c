@@ -111,7 +111,6 @@ void fill_struct(t_flag *help, const char *format, va_list args)
 				if (format[j + 1] == '-')
 				{
 					help->rev = 1;
-					j++;
 				}
 				else
 				{
@@ -580,12 +579,12 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 	i = 0;
 	j = 0;
 	k = 0;
-	if (help->precision > ft_strlen(str) && (c == 'i' || c == 'd' || c == 'u' ||
-	c == 'x' || c == 'X' || c == 'p'))
-	{
-		help->rev = 1;
+	if (help->precision > ft_strlen(str) && (c == 'i' || c == 'd' || c == 'u' || c == 'p'
+	|| c == 'x' || c == 'X'))
 		help->zero = 1;
-	}
+	if ((help->precision > 1 && (c == 'i' || c == 'd' || c == 'u' || c == 'p'
+	|| c == 'x' || c == 'x')) || (help->precision > ft_strlen(str)))
+		help->width = 0;
 	if (help->precision < 0)
 	{
 		help->precision = -1;
@@ -599,20 +598,15 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 	}
 //	if (help->precision >= 0 && help->set_prec)
 //		help->zero = 0;
-	if (help->precision && help->width == 0)
+	if (help->precision && help->width == 0 && (c == 'i' || c == 'd' || c == 'u' || c == 'p'
+	|| c == 'x' || c == 'x'))
 		help->zero = 1;
-	if ((help->precision == 0 && help->set_prec == 1 && str[i] == '0' && str[i + 1] == 'x')
-		|| (str[i] == '0' && str[i + 1] == 'x'))
-		help->precision += 2;
-	if (str[i] == '-')
-	{
-		write(1, "-", sizeof(char));
-		help->precision++;
-		k++;
-	}
+//	if ((help->precision == 0 && help->set_prec == 1 && str[i] == '0' && str[i + 1] == 'x')
+//		|| (str[i] == '0' && str[i + 1] == 'x'))
+//		help->precision += 2;
 	if (help->rev == 0)
 	{
-		while ((j < help->width - ft_strlen(str) && help->set_prec == 0)
+		while ((j < help->width - ft_strlen(str) && (help->set_prec == 0 || help->precision == -1))
 		|| (j < help->width - help->precision && help->set_prec == 1))
 		{
 		//	if (help->zero == 1)
@@ -648,6 +642,12 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 	}
 	else
 	{
+		if (str[i] == '-' && (help->set_prec == 0 || (help->set_prec == 1 && help->precision >= 1)))
+		{
+			write(1, "-", sizeof(char));
+			help->precision++;
+			k++;
+		}
 		while (i < help->precision - ft_strlen(str))
 		{
 		//	if (c == 'p')
