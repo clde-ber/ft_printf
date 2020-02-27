@@ -250,7 +250,7 @@ void fill_struct_conv(t_flag *help, char c, va_list args)
 		if (!(l = (unsigned long long)va_arg(args, void *)))
 			help->ret += ft_putstr_len(c, "0x0", help);
 		else
-			help->ret += ft_putstr_len(c, ft_strjoin("0x", to_hex(c, l, "0123456789abcdef")),
+			help->ret += ft_putstr_len(c, (char *)ft_strjoin("0x", to_hex(c, l, "0123456789abcdef")),
 			help);
 	}
 }
@@ -516,42 +516,82 @@ char	*to_hex(char c, unsigned long long n, char *base)
 
 int ft_putchar(char c, t_flag *help)
 {
+	int i;
 	int j;
 
+	i = 0;
 	j = 0;
-	if (help->precision > help->width)
+	if (help->precision > 1 && (c == 'i' || c == 'd' || c == 'u' || c == 'p'
+	|| c == 'x' || c == 'X'))
 		help->zero = 1;
-	if (help->width > help->precision)
-		help->width = help->width - help->precision - 1;
-	if (help->width < 1 && help->precision > 1)
-		help->precision = help->precision - help->width - 1;
+	if (help->precision > 1 && (c == 'i' || c == 'd' || c == 'u' || c == 'p'
+	|| c == 'x' || c == 'x'))
+		help->width = 0;
+	if (help->precision < 0)
+	{
+		help->precision = -1;
+		help->rev = 1;
+		help->set_prec = 1;
+	}
+	if (help->width < 0)
+	{
+		help->width = -help->width;
+		help->rev = 1;
+	}
+//	if (help->precision >= 0 && help->set_prec)
+//		help->zero = 0;
+	if (help->precision && help->width == 0 && (c == 'i' || c == 'd' || c == 'u' || c == 'p'
+	|| c == 'x' || c == 'x'))
+		help->zero = 1;
+//	if ((help->precision == 0 && help->set_prec == 1 && str[i] == '0' && str[i + 1] == 'x')
+//		|| (str[i] == '0' && str[i + 1] == 'x'))
+//		help->precision += 2;
 	if (help->rev == 0)
 	{
-		while (j < help->width + help->precision)
+		while ((j < help->width - 1 && (help->set_prec == 0 || help->precision == -1))
+		|| (j < help->width - help->precision && help->set_prec == 1))
+		{
+		//	if (help->zero == 1)
+		//		write(1, "0", sizeof(char));
+		//	else
+				write(1, " ", sizeof(char));
+
+			j++;
+		}
+		while (i < help->precision - 1)
 		{
 			if (help->zero == 1)
 				write(1, "0", sizeof(char));
 			else
 				write(1, " ", sizeof(char));
-			j++;
+			i++;
 		}
-		write(1, &c, sizeof(char));
+		if (help->set_prec == 0 || (help->set_prec == 1 && help->precision != 0))
+		{	write(1, &c, sizeof(char));
+			help->ret++;}
 	}
 	else
 	{
-		write(1, &c, sizeof(char));
-		while (j + 1 < help->precision && help->set_prec)
+		if (help->set_prec == 0 || (help->set_prec == 1 && help->precision != 0))
+		{	write(1, &c, sizeof(char));
+			help->ret++;}
+		while (i < help->precision - 1)
 		{
-			write(1, "0", sizeof(char));
-			j++;
+		//	if (c == 'p')
+		//		break ;
+			if (help->zero == 1)
+				write(1, "0", sizeof(char));
+			else
+				write(1, " ", sizeof(char));
+			i++;
 		}
-		while (j < help->width + help->precision)
+		while (j + i < help->width - 1)
 		{
-			write(1, " " , sizeof(char));
+			write(1, " ", sizeof(char));
 			j++;
 		}
 	}
-	return (j + 1);
+	return (j + i);
 }
 
 int ft_putstr(const char *str)
@@ -582,9 +622,9 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 	if (help->precision > ft_strlen(str) && (c == 'i' || c == 'd' || c == 'u' || c == 'p'
 	|| c == 'x' || c == 'X'))
 		help->zero = 1;
-	if ((help->precision > 1 && (c == 'i' || c == 'd' || c == 'u' || c == 'p'
-	|| c == 'x' || c == 'x')) || (help->precision > ft_strlen(str)))
-		help->width = 0;
+//	if ((help->precision > 1 && (c == 'i' || c == 'd' || c == 'u' || c == 'p'
+//	|| c == 'x' || c == 'x')))
+//		help->width = 0;
 	if (help->precision < 0)
 	{
 		help->precision = -1;
@@ -647,14 +687,6 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 			write(1, "-", sizeof(char));
 			k++;
 		}
-		while ((str[k] && k < help->precision && help->set_prec &&
-		help->precision != -1) || (str[k] && (help->set_prec == 0 ||
-		(help->set_prec == 1 && help->precision == -1))) || (str[k] && (c == 'p'
-		|| c == 'i' || c == 'd' || c == 'x' || c == 'X' || c == 'u')))
-		{
-			write(1, &str[k], sizeof(char));
-			k++;
-		}
 		while (i < help->precision - ft_strlen(str))
 		{
 		//	if (c == 'p')
@@ -664,6 +696,14 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 			else
 				write(1, " ", sizeof(char));
 			i++;
+		}
+		while ((str[k] && k < help->precision && help->set_prec &&
+		help->precision != -1) || (str[k] && (help->set_prec == 0 ||
+		(help->set_prec == 1 && help->precision == -1))) || (str[k] && (c == 'p'
+		|| c == 'i' || c == 'd' || c == 'x' || c == 'X' || c == 'u')))
+		{
+			write(1, &str[k], sizeof(char));
+			k++;
 		}
 		while (j + k + i < help->width)
 		{
