@@ -650,11 +650,14 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 		help->width = 0;
 	if (c != 'c' && c != 's' && str[k] == '-')
 		help->precision++;
+//	if (help->precision < ft_strlen(str) && (c == 'i' || c == 'd' || c == 'u' || c == 'p'
+//	|| c == 'x' || c == 'X'))
+//		help->precision = 0;
 	if (help->rev == 0)
 	{
-		while ((j < help->width - ft_strlen(str) && (help->precision == -1 ||
+		while (((j < help->width - ft_strlen(str) && (help->precision == -1 ||
 		help->set_prec == 0)) || (j < help->width - help->precision  &&
-		help->set_prec == 1 && help->precision  != -1))
+		help->set_prec == 1 && help->precision  != -1)))
 		{
 		//	if (help->zero == 1)
 		//		write(1, "0", sizeof(char));
@@ -668,7 +671,7 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 			write(1, "-", sizeof(char));
 			k++;
 		}
-		while (i < help->precision - ft_strlen(str))
+		while (i < help->precision - ft_strlen(str) && help->precision > ft_strlen(str))
 		{
 		//	if (c == 'p')
 		//		break ;
@@ -706,7 +709,7 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 			write(1, &str[k], sizeof(char));
 			k++;
 		}
-		while (i < help->precision - ft_strlen(str))
+		while (i < help->precision - ft_strlen(str) && help->precision > ft_strlen(str))
 		{
 		//	if (c == 'p')
 		//		break ;
