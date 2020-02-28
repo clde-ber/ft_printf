@@ -102,7 +102,7 @@ void fill_struct(t_flag *help, const char *format, va_list args)
 	while (format[j] && (is_flag(format[j]) || is_conv(format[j])))
 	{
 //		printf("j = %d\n", j);
-		while ((format[j] == '-' || format[j] == '0'))
+		while (format[j] == '-' || format[j] == '0')
 		{
 			if (format[j] == '-')
 				help->rev = 1;
@@ -632,8 +632,8 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 	}
 	if (help->width < 0)
 	{
-		help->width = -help->width;
 		help->rev = 1;
+		help->width = -help->width;
 	}
 //	if (help->precision >= 0 && help->set_prec)
 //		help->zero = 0;
@@ -652,8 +652,9 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 		help->precision++;
 	if (help->rev == 0)
 	{
-		while ((j < help->width - ft_strlen(str) && (help->precision == -1 || help->set_prec == 0))
-		|| (j < help->width - help->precision && help->set_prec == 1 && help->precision  != -1))
+		while ((j < help->width - ft_strlen(str) && (help->precision == -1 ||
+		help->set_prec == 0)) || (j < help->width - help->precision  &&
+		help->set_prec == 1 && help->precision  != -1))
 		{
 		//	if (help->zero == 1)
 		//		write(1, "0", sizeof(char));
@@ -698,6 +699,13 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 			write(1, "-", sizeof(char));
 			k++;
 		}
+		while (((str[k] && k < help->precision && help->set_prec &&
+		help->precision != -1) || (str[k] && (help->set_prec == 0 ||
+		(help->set_prec == 1 && help->precision == -1)))) && (c == 's' || c == 'c'))
+		{
+			write(1, &str[k], sizeof(char));
+			k++;
+		}
 		while (i < help->precision - ft_strlen(str))
 		{
 		//	if (c == 'p')
@@ -708,10 +716,8 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 				write(1, " ", sizeof(char));
 			i++;
 		}
-		while ((str[k] && k < help->precision && help->set_prec &&
-		help->precision != -1) || (str[k] && (help->set_prec == 0 ||
-		(help->set_prec == 1 && help->precision == -1))) || (str[k] && (c == 'p'
-		|| c == 'i' || c == 'd' || c == 'x' || c == 'X' || c == 'u')))
+		while (str[k] && (c == 'p'
+		|| c == 'i' || c == 'd' || c == 'x' || c == 'X' || c == 'u'))
 		{
 			write(1, &str[k], sizeof(char));
 			k++;
