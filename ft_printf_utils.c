@@ -694,7 +694,9 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 		while ((str[k] && k < help->precision && help->set_prec &&
 		help->precision != -1) || (str[k] && (help->set_prec == 0 ||
 		(help->set_prec == 1 && help->precision == -1))) || (str[k] && (c == 'p'
-		|| c == 'i' || c == 'd' || c == 'x' || c == 'X' || c == 'u')))
+		|| c == 'i' || c == 'd' || c == 'x' || c == 'X' || c == 'u') && ((((str[k] != '0'
+		&& ft_strlen(str) == 1) || ft_strlen(str) > 1) || (str[k] == '0' && ft_strlen(str)
+		== 1 && (help->set_prec == 0 || (help->set_prec == 1 && help->precision != 0)))))))
 		{
 			write(1, &str[k], sizeof(char));
 			k++;
@@ -725,7 +727,9 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 			i++;
 		}
 		while (str[k] && (c == 'p'
-		|| c == 'i' || c == 'd' || c == 'x' || c == 'X' || c == 'u'))
+		|| c == 'i' || c == 'd' || c == 'x' || c == 'X' || c == 'u') && ((((str[k] != '0'
+		&& ft_strlen(str) == 1) || ft_strlen(str) > 1) || (str[k] == '0' && ft_strlen(str)
+		== 1 && (help->set_prec == 0 || (help->set_prec == 1 && help->precision != 0))))))
 		{
 			write(1, &str[k], sizeof(char));
 			k++;
