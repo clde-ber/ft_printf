@@ -655,9 +655,14 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 //		help->precision = 0;
 	if (help->rev == 0)
 	{
-		while (((j < help->width - ft_strlen(str) && (help->precision == -1 ||
+		while ((((j < help->width - ft_strlen(str) && (help->precision == -1 ||
 		help->set_prec == 0)) || (j < help->width - help->precision  &&
-		help->set_prec == 1 && help->precision  != -1)))
+		help->set_prec == 1 && help->precision  != -1)) && (c == 's' || c == 'c'))
+		|| (c != 's' && c != 'c' && ((j < help->width - ft_strlen(str) && (help->set_prec
+		== 0 || (help->set_prec == 1 && (help->precision <= ft_strlen(str) && help->precision
+		!= 0)) || (j < help->width - help->precision
+		&& ((help->precision == 0 && help->set_prec == 1) || (help->precision >
+		ft_strlen(str)))))))))
 		{
 		//	if (help->zero == 1)
 		//		write(1, "0", sizeof(char));
