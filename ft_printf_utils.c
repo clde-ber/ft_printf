@@ -613,10 +613,12 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 	int i;
 	int j;
 	int k;
+	int boolean;
 
 	i = 0;
 	j = 0;
 	k = 0;
+	boolean = 0;
 	if (help->precision > ft_strlen(str) && (c == 'i' || c == 'd' || c == 'u' || c == 'p'
 	|| c == 'x' || c == 'X'))
 		help->zero = 1;
@@ -631,6 +633,7 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 	if (help->width < 0)
 	{
 		help->rev = 1;
+		boolean = 1;
 		help->width = -help->width;
 	}
 //	if (help->precision >= 0 && help->set_prec)
@@ -659,14 +662,14 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 	{
 		while ((((j < help->width - ft_strlen(str) && (help->precision == -1 ||
 		help->set_prec == 0)) || (j < help->width - help->precision  &&
-		help->set_prec == 1 && help->precision  != -1)) && (c == 's' || c == 'c'))
+		help->set_prec == 1 && help->precision  != -1 && help->precision < help->width)) && (c == 's' || c == 'c'))
 		|| (c != 's' && c != 'c' && ((j < help->width - ft_strlen(str) && (help->set_prec
 		== 0 || (help->set_prec == 1 && (help->precision <= ft_strlen(str) && help->precision
-		!= 0)) || (j < help->width - help->precision
+		!= 0)) || (j < help->width - help->precision && help->precision < help->width
 		&& ((help->precision == 0 && help->set_prec == 1) || (help->precision >
 		ft_strlen(str)))))))))
 		{
-			if (help->zero == 1 && (help->set_prec == 0 || help->precision == -1))
+			if ((help->zero == 1 && (help->set_prec == 0 || help->precision == -1)) || boolean == 1)
 				write(1, "0", sizeof(char));
 			else
 				write(1, " ", sizeof(char));
@@ -688,8 +691,8 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 				write(1, "0x", sizeof(char) * 2);
 				k += 2;
 			}
-			if (help->zero == 1)
-				write(1, "0", sizeof(char));
+			if (c != 's' && c != 'c')
+				write(1, "0", sizeof(char));	
 			else
 				write(1, " ", sizeof(char));
 			i++;
@@ -739,7 +742,7 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 		{
 		//	if (c == 'p')
 		//		break ;
-			if (help->zero == 1)
+			if (c != 's' && c != 'c')
 				write(1, "0", sizeof(char));
 			else
 				write(1, " ", sizeof(char));
