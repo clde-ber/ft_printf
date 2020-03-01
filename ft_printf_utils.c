@@ -146,9 +146,9 @@ void fill_struct(t_flag *help, const char *format, va_list args)
 		}
 		if (format[j] == '.')
 		{
+			help->set_prec = 1;
 			if (format[j + 1] == '*' || ft_isdigit(format[j + 1]))
 			{
-				help->set_prec = 1;
 				j++;
 				while (ft_isdigit(format[j]) || format[j] == '-')
 				{
@@ -210,7 +210,7 @@ void fill_struct_conv(t_flag *help, char c, va_list args)
 	{
 		if (!(res = va_arg(args, char *)))
 		{
-			if (help->precision >= 6 || help->set_prec == 0 || (help->set_prec == 1 && help->precision >= 6))
+			if (help->set_prec == 0 || (help->set_prec == 1 && help->precision >= 6))
 				help->ret += ft_putstr_len(c, "(null)", help);
 			else
 				help->ret += ft_putstr_len(c, "", help);
@@ -272,7 +272,7 @@ int	ft_strlen(const char *s)
 
 	i = 0;
 	if (!s)
-		return (-1);
+		return (6);
 	while (s[i])
 		i++;
 	return (i);
@@ -659,7 +659,7 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 		help->width = 0;
 	if (help->width == ft_strlen(str) && help->precision > ft_strlen(str))
 		help->precision = ft_strlen(str);
-	if (c == 's' && help->precision > help->width && help->precision > ft_strlen(str))
+	if (c == 's' && help->precision > ft_strlen(str))
 	{
 	//	help->width = 0;
 		help->precision = ft_strlen(str);
