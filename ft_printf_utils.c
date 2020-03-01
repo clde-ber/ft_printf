@@ -648,6 +648,8 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 		help->width = 0;
 	if (help->width == ft_strlen(str) && help->precision > ft_strlen(str))
 		help->precision = ft_strlen(str);
+	if (c == 's' && help->width <= ft_strlen(str) && help->precision > help->width && help->precision > ft_strlen(str))
+		help->precision = ft_strlen(str);
 	if (c != 'c' && c != 's' && str[k] == '-')
 		help->precision++;
 //	if (help->precision < ft_strlen(str) && (c == 'i' || c == 'd' || c == 'u' || c == 'p'
@@ -671,13 +673,13 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 
 			j++;
 		}
-		if (c != 's' && c != 'c' && str[i] == '-' && (help->set_prec == 0 ||
+		if (c != 's' && c != 'c' && str[k] == '-' && (help->set_prec == 0 ||
 		(help->set_prec == 1 &&	help->precision >= 1)))
 		{
 			write(1, "-", sizeof(char));
 			k++;
 		}
-		while (i < help->precision - ft_strlen(str) && help->precision > ft_strlen(str))
+		while (i < help->precision - ft_strlen(str))
 		{
 		//	if (c == 'p')
 		//		break ;
@@ -721,7 +723,7 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 	}
 	else
 	{
-		if (str[i] == '-' && (help->set_prec == 0 || (help->set_prec == 1 && help->precision >= 1)))
+		if (str[k] == '-' && (help->set_prec == 0 || (help->set_prec == 1 && help->precision >= 1)))
 		{
 			write(1, "-", sizeof(char));
 			k++;
@@ -733,7 +735,7 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 			write(1, &str[k], sizeof(char));
 			k++;
 		}
-		while (i < help->precision - ft_strlen(str) && help->precision > ft_strlen(str))
+		while (i < help->precision - ft_strlen(str))
 		{
 		//	if (c == 'p')
 		//		break ;
@@ -747,15 +749,14 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 		|| c == 'i' || c == 'd' || c == 'x' || c == 'X' || c == 'u'))
 		{
 			if (str[k] == '0' && ft_strlen(str)	== 1 &&
-			help->set_prec == 1 && help->precision == 0 && help->width > 1 &&
-			c != 's' && c != 'c')
+			help->set_prec == 1 && help->precision == 0 && help->width > 1)
 				write(1, " ", sizeof(char));
 		//	else if (help->zero == 1 && str[k] == '0' && ft_strlen(str)	== 1 &&
 		//	help->set_prec == 1 && help->precision == 0 && help->width > 1 &&
 		//	c != 's' && c != 'c')
 		//		write(1, "0", sizeof(char));
 			else if (str[k] == '0' && ft_strlen(str) == 1 && help->set_prec == 1 &&
-			help->precision == 0 && c != 's' && c != 'c')
+			help->precision == 0)
 				write(1, "\0", sizeof(char));
 			else
 				write(1, &str[k], sizeof(char));
