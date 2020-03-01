@@ -651,8 +651,11 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 		help->width = 0;
 	if (help->width == ft_strlen(str) && help->precision > ft_strlen(str))
 		help->precision = ft_strlen(str);
-	if (c == 's' && help->width <= ft_strlen(str) && help->precision > help->width && help->precision > ft_strlen(str))
+	if (c == 's' && help->precision > help->width && help->precision > ft_strlen(str))
+	{
+	//	help->width = 0;
 		help->precision = ft_strlen(str);
+	}
 	if (c != 'c' && c != 's' && str[k] == '-')
 		help->precision++;
 //	if (help->precision < ft_strlen(str) && (c == 'i' || c == 'd' || c == 'u' || c == 'p'
