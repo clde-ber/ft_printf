@@ -171,6 +171,11 @@ void fill_struct(t_flag *help, const char *format, va_list args)
 			}
 		}
 	//	printf("format[j]! %c\n", format[j]);
+		if (format[j] == '%')
+		{
+			ft_putchar(format[j], help);
+			init_all_except_ret(help);
+		}
 		if (is_conv(format[j]))
 		{
 			fill_struct_conv(help, format[j], args);
@@ -482,11 +487,11 @@ int	ft_atoi(const char *str)
 	return (res);
 }
 
-char	*to_hex(char c, unsigned long long n, char *base)
+char	*to_hex(char c, unsigned int n, char *base)
 {
 	int i;
 	char *str;
-	unsigned long long k;
+	unsigned int k;
 
 	k = n;
 	i = 0;
@@ -736,8 +741,8 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 		//		write(1, "0", sizeof(char));
 			else if (str[k] == '0' && ft_strlen(str) == 1 && help->set_prec == 1 &&
 			help->precision == 0 && c != 's' && c != 'c')
-			{	write(1, "\0", sizeof(char));
-				help->ret--;}
+			//{	write(1, "\0", sizeof(char));
+				help->ret--;
 			else
 				write(1, &str[k], sizeof(char));
 			k++;
@@ -784,9 +789,8 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 		//		write(1, "0", sizeof(char));
 			else if (str[k] == '0' && ft_strlen(str) == 1 && help->set_prec == 1 &&
 			help->precision == 0)
-			{	write(1, "\0", sizeof(char));
+		//	{	write(1, "\0", sizeof(char));
 				help->ret--;
-			}
 			else
 				write(1, &str[k], sizeof(char));
 			k++;
