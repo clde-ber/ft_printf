@@ -167,7 +167,6 @@ void fill_struct(t_flag *help, const char *format, va_list args)
 			else
 			{
 				help->precision = 0;
-				help->set_prec = 1;
 				j++;
 			}
 		}
@@ -209,12 +208,7 @@ void fill_struct_conv(t_flag *help, char c, va_list args)
 	if (c == 's')
 	{
 		if (!(res = va_arg(args, char *)))
-		{
-			if (help->set_prec == 0 || (help->set_prec == 1 && help->precision >= 6))
-				help->ret += ft_putstr_len(c, "(null)", help);
-			else
-				help->ret += ft_putstr_len(c, "", help);
-		}
+			help->ret += ft_putstr_len(c, "(null)", help);
 		else
 			help->ret += ft_putstr_len(c, res, help);
 	}
@@ -686,7 +680,7 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 		ft_strlen(str)))))))))
 		{
 			if ((help->zero == 1 && (help->set_prec == 0 || help->precision == -1)) || boolean == 1)
-			{	
+			{
 				if (c != 's' && c != 'c' && str[k] == '-' && (help->set_prec == 0 ||
 				(help->set_prec == 1 &&	help->precision >= 1)))
 				{
@@ -716,7 +710,7 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 				k += 2;
 			}
 			if (c != 's' && c != 'c')
-				write(1, "0", sizeof(char));	
+				write(1, "0", sizeof(char));
 			else
 				write(1, " ", sizeof(char));
 			i++;
@@ -742,7 +736,8 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 		//		write(1, "0", sizeof(char));
 			else if (str[k] == '0' && ft_strlen(str) == 1 && help->set_prec == 1 &&
 			help->precision == 0 && c != 's' && c != 'c')
-				write(1, "\0", sizeof(char));
+			{	write(1, "\0", sizeof(char));
+				help->ret--;}
 			else
 				write(1, &str[k], sizeof(char));
 			k++;
@@ -772,13 +767,13 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 				k += 2;
 			}
 			if (c != 's' && c != 'c')
-				write(1, "0", sizeof(char));	
+				write(1, "0", sizeof(char));
 			else
 				write(1, " ", sizeof(char));
 			i++;
 		}
-		while (str[k] && (c == 'p'
-		|| c == 'i' || c == 'd' || c == 'x' || c == 'X' || c == 'u'))
+		while (str[k] && (c == 'p' || c == 'i' || c == 'd' || c == 'x' || c == 'X'
+		|| c == 'u'))
 		{
 			if (str[k] == '0' && ft_strlen(str)	== 1 &&
 			help->set_prec == 1 && help->precision == 0 && help->width > 1)
@@ -789,7 +784,9 @@ int ft_putstr_len(char c, const char *str, t_flag *help)
 		//		write(1, "0", sizeof(char));
 			else if (str[k] == '0' && ft_strlen(str) == 1 && help->set_prec == 1 &&
 			help->precision == 0)
-				write(1, "\0", sizeof(char));
+			{	write(1, "\0", sizeof(char));
+				help->ret--;
+			}
 			else
 				write(1, &str[k], sizeof(char));
 			k++;
